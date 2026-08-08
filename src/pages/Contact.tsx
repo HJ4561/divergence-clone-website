@@ -1,5 +1,6 @@
 import React from 'react';
 import EnquiryForm from '../components/ui/EnquiryForm';
+import { Link } from 'lucide-react';
 
 export default function Contact() {
   return (
@@ -29,9 +30,9 @@ export default function Contact() {
         <div className="text-center mt-4">
           <p className="text-sm text-gray-400">
             Prefer to talk?{' '}
-            <a href="#" className="text-teal-300 hover:text-teal-200 transition-colors underline">
-              Book a call &rarr;
-            </a>
+            <Link to="/contact" className="text-teal-300 hover:text-teal-200 transition-colors underline">
+  Book a call &rarr;
+</Link>
           </p>
         </div>
       </div>

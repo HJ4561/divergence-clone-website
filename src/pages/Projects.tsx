@@ -1,7 +1,5 @@
 // src/pages/Projects.tsx
-import React from 'react';
-import { Link } from 'react-router-dom';
-import { Cpu, GitBranch, Radio, Zap, Sparkles, Shield, Users, CheckCircle, Clock, TrendingUp, Award } from 'lucide-react';
+import { Cpu, Radio, Zap, Sparkles, Shield, Users, CheckCircle } from 'lucide-react';
 
 const projects = [
   {

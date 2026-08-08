@@ -13,7 +13,6 @@ import {
   MapPin,
   Users,
   Target,
-  Sparkles,
   CheckCircle,
 } from 'lucide-react';
 

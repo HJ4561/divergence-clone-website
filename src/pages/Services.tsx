@@ -1,7 +1,7 @@
 // src/pages/Services.tsx
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Cpu, GitBranch, Users, Radio, ArrowRight, CheckCircle, Download, Sparkles } from 'lucide-react';
+import { Cpu, GitBranch, Users, Radio, ArrowRight, CheckCircle, Download } from 'lucide-react';
 
 const services = [
   {

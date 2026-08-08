@@ -80,9 +80,9 @@ const projects = [
   {
     id: 6,
     title: 'Satellite Communication System',
-    description: 'End-to-end automation for satellite communication system simulation, from orbital mechanics to RF link budget analysis.',
-    fullDescription: 'Satellite communication systems require complex multi-domain simulation. We built an end-to-end automation pipeline that handles everything from orbital mechanics calculations to RF link budget analysis, all in one integrated workflow.',
-    tags: ['Satellite', 'RF Link', 'Orbital'],
+    description: 'End-to-end automation for satellite communication system simulation, from orbital mechanics to RF  budget analysis.',
+    fullDescription: 'Satellite communication systems require complex multi-domain simulation. We built an end-to-end automation pipeline that handles everything from orbital mechanics calculations to RF  budget analysis, all in one integrated workflow.',
+    tags: ['Satellite', 'RF ', 'Orbital'],
     icon: Sparkles,
     results: [
       'End-to-end automation',
@@ -90,7 +90,7 @@ const projects = [
       'Reduced analysis time by 80%',
       'Complete system optimization'
     ],
-    technologies: ['Satellite Systems', 'RF Link', 'Orbital Mechanics']
+    technologies: ['Satellite Systems', 'RF ', 'Orbital Mechanics']
   }
 ];
 

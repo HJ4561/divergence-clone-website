@@ -6,6 +6,7 @@ import Footer from './components/layout/Footer';
 import WhatsAppButton from './components/ui/WhatsAppButton';
 import Home from './pages/Home';
 import About from './pages/About';
+import BlogPostPage from './pages/BlogPost';  // Changed from BlogPost to BlogPostPage
 import Services from './pages/Services';
 import Projects from './pages/Projects';
 import Blog from './pages/Blog';
@@ -26,6 +27,8 @@ function App() {
             <Route path="/blog" element={<Blog />} />
             <Route path="/contact" element={<Contact />} />
             <Route path="/platform" element={<Platform />} />
+            <Route path="/blog/:slug" element={<BlogPostPage />} />
+
           </Routes>
         </main>
         <Footer />

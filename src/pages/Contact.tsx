@@ -27,12 +27,12 @@ export default function Contact() {
           </div>
         </div>
 
-        <div className="text-center mt-4">
+         <div className="text-center mt-4">
           <p className="text-sm text-gray-400">
             Prefer to talk?{' '}
             <Link to="/contact" className="text-teal-300 hover:text-teal-200 transition-colors underline">
-  Book a call &rarr;
-</Link>
+              Book a call &rarr;
+            </Link>
           </p>
         </div>
       </div>

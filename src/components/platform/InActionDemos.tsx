@@ -1,29 +1,41 @@
+// src/components/platform/InActionDemos.tsx
 import React from 'react';
 
-const demos = [
-  {
-    title: "Minimize Manual CAD Work",
-    description: "Junior engineers create simulation-ready geometries in seconds with natural language — automated defeaturing strips unnecessary CAD details so models are simulation-ready without manual cleanup. Your team stops waiting on senior engineers for model setup.",
-    tags: [],
-    label: "Geometry Defeaturing Demo",
-    visual: "geometry",
-  },
-  {
-    title: "Run Complex Simulations Without Senior Oversight",
-    description: "Any team member can launch simulations, parameter sweeps, and optimization workflows through natural language. Easily connect external optimizers into your simulation pipeline — AI orchestrates the full loop, catches errors early, and queues follow-up tasks so your senior engineers stay focused on design decisions.",
-    tags: ["Optimization", "Design Exploration"],
-    label: "External Optimizer Demo",
-    visual: "loop",
-  },
-  {
-    title: "Get Actionable Insights in Minutes, Not Days",
-    description: "Generate S-parameter plots, Smith charts, and far-field radiation patterns on demand with natural language. Teams go from simulation complete to design decision in minutes instead of waiting for post-processing queues.",
-    tags: [],
-    label: "Simulation Results Visualization",
-    visual: "chart",
-  },
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface Demonstration {
+  id: number;
+  heading: string;
+  description: string;
+  video_url: string;
+  video_thumbnail: string | null;
+  cta_label: string;
+  cta_link: string;
+  order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
+interface PlatformSectionData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  operating_benefits: any[];
+  work_with_us: any[];
+  coming_soon: any[];
+  demonstrations: Demonstration[];
+  built_for_production: any[];
+  pricing_plans: any[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// VISUAL PANES
+// ============================================================
 function ChatPane() {
   return (
     <div className="w-[38%] h-full bg-ink-900 p-2.5 flex flex-col gap-1.5">
@@ -78,8 +90,11 @@ const visuals: Record<string, React.ComponentType> = {
   chart: ChartPane,
 };
 
+// ============================================================
+// DEMO THUMBNAIL
+// ============================================================
 function DemoThumbnail({ visual, label }: { visual: string; label: string }) {
-  const Pane = visuals[visual];
+  const Pane = visuals[visual] || GeometryPane;
   return (
     <div className="relative bg-black rounded-lg border border-white/10 overflow-hidden aspect-video group/thumb cursor-pointer">
       <div className="flex w-full h-full">
@@ -98,7 +113,70 @@ function DemoThumbnail({ visual, label }: { visual: string; label: string }) {
   );
 }
 
-export default function InActionDemos() {
+// ============================================================
+// MAIN IN ACTION DEMOS COMPONENT
+// ============================================================
+interface InActionDemosProps {
+  data?: PlatformSectionData | null;
+  loading?: boolean;
+}
+
+export default function InActionDemos({ data, loading = false }: InActionDemosProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="h-4 w-32 bg-ink-800 rounded mb-6"></div>
+            <div className="h-10 w-2/3 bg-ink-800 rounded mb-4"></div>
+            <div className="h-4 w-1/2 bg-ink-800 rounded mb-10"></div>
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-64 bg-ink-800 rounded-xl mb-6"></div>
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Demonstrations content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API demonstrations to the format expected by the UI
+  const demos = data.demonstrations && data.demonstrations.length > 0
+    ? data.demonstrations.map((demo, index) => ({
+        title: demo.heading,
+        description: demo.description,
+        tags: [],
+        label: demo.cta_label || `Demo ${index + 1}`,
+        visual: ['geometry', 'loop', 'chart'][index % 3] || 'geometry',
+      }))
+    : [];
+
+  // If no demos, show empty state
+  if (demos.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">No demonstrations available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -107,17 +185,18 @@ export default function InActionDemos() {
         </span>
 
         <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 text-white">
-          See Divergent Physics in Action
+          {data.heading}
         </h2>
         <p className="text-sm md:text-base text-gray-400 mb-10 md:mb-12">
-          See how teams democratize simulation expertise and ship designs faster.
+          {data.description}
         </p>
 
         <div className="divide-y divide-white/10">
-          {demos.map((demo) => (
+          {demos.map((demo, index) => (
             <div
               key={demo.title}
               className="grid grid-cols-1 md:grid-cols-[1fr_1.6fr] gap-x-10 gap-y-6 py-10 first:pt-0"
+              style={{ animationDelay: `${index * 150}ms` }}
             >
               <h3 className="font-serif text-lg md:text-xl font-semibold text-white">
                 {demo.title}

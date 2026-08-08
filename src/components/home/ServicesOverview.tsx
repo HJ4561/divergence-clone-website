@@ -1,54 +1,122 @@
+// src/components/home/ServicesOverview.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Cpu, GitBranch, Users, Radio } from 'lucide-react';
 
-const services = [
-  {
-    icon: Cpu,
-    title: "Agentic Workflow Development",
-    description: "We take a workflow you already run — spec to simulation to report — and turn it into an AI agent that runs it end to end, unattended, with every step logged and reviewable.",
-    features: [
-      "Automated geometry, meshing, and setup",
-      "Optimization loops with verified results",
-      "Auto-generated customer-facing reports",
-      "Integration with CAD, PLM, and your pipeline"
-    ]
-  },
-  {
-    icon: GitBranch,
-    title: "Integration & Deployment",
-    description: "AI automation deployed inside your solver environment and your security perimeter — tested, validated, and maintained as vendor releases ship.",
-    features: [
-      "Enterprise solver environment setup",
-      "On-premises or private deployment",
-      "Security and compliance configuration",
-      "We carry the maintenance burden"
-    ]
-  },
-  {
-    icon: Users,
-    title: "AI Enablement for Engineering Teams",
-    description: "Your engineers build the automation themselves — on our platform and domain primitives — so you capture the capability without carrying the maintenance burden alone.",
-    features: [
-      "Hands-on automation workshops",
-      "Build on our solver-integration layer",
-      "Playbooks, documentation, and mentorship"
-    ]
-  },
-  {
-    icon: Radio,
-    title: "Dedicated RF & EM Engineering",
-    description: "Deep electromagnetic expertise on demand — for complex simulations, wireless system modeling, and trusted subcontracting on third-party projects.",
-    features: [
-      "Antenna, MIMO, and multi-user network studies",
-      "Ray-traced propagation with Ansys SBR+",
-      "OFDMA and link-level KPI extraction (SINR, capacity, BLER)",
-      "Complex simulation troubleshooting & custom algorithms"
-    ]
-  },
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface ServiceCard {
+  id: number;
+  heading: string;
+  description: string;
+  icon: string;
+  image: string | null;
+  points: string;
+  points_list: string[];
+  order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-export default function ServicesOverview() {
+interface ServiceSectionData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  services: ServiceCard[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// ICON MAP - Map API icon strings to Lucide components
+// ============================================================
+const iconMap: Record<string, React.ElementType> = {
+  'cpu': Cpu,
+  'git-branch': GitBranch,
+  'users': Users,
+  'radio': Radio,
+  'Cpu': Cpu,
+  'GitBranch': GitBranch,
+  'Users': Users,
+  'Radio': Radio,
+};
+
+function getIcon(iconName: string): React.ElementType {
+  return iconMap[iconName] || Cpu;
+}
+
+// ============================================================
+// MAIN SERVICES OVERVIEW COMPONENT
+// ============================================================
+interface ServicesOverviewProps {
+  data?: ServiceSectionData | null;
+  loading?: boolean;
+}
+
+export default function ServicesOverview({ data, loading = false }: ServicesOverviewProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="mb-10 md:mb-14 max-w-2xl">
+              <div className="h-4 w-32 bg-ink-800 rounded mb-4"></div>
+              <div className="h-10 w-2/3 bg-ink-800 rounded mb-4"></div>
+              <div className="h-4 w-1/2 bg-ink-800 rounded"></div>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-64 bg-ink-800 rounded-xl"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Services content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API services to the format expected by the UI
+  const services = data.services && data.services.length > 0
+    ? data.services.map((service) => ({
+        icon: getIcon(service.icon),
+        title: service.heading,
+        description: service.description,
+        features: service.points_list && service.points_list.length > 0 
+          ? service.points_list 
+          : [],
+      }))
+    : [];
+
+  // If no services, show empty state
+  if (services.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">No services available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="what-we-do" className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -57,10 +125,10 @@ export default function ServicesOverview() {
             &sect; 03 / SERVICES
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 text-white">
-            What We Do
+            {data.heading}
           </h2>
           <p className="text-sm md:text-base text-gray-400 leading-relaxed">
-            End-to-end AI automation for simulation-driven engineering teams — done for you, or built with your engineers so your team owns it.
+            {data.description}
           </p>
         </div>
 
@@ -84,14 +152,16 @@ export default function ServicesOverview() {
                 {service.description}
               </p>
 
-              <ul className="space-y-2 border-t border-white/10 pt-4">
-                {service.features.map((feature) => (
-                  <li key={feature} className="text-sm text-gray-300 flex items-start gap-2.5">
-                    <span className="w-1 h-1 rounded-full bg-teal-400/70 mt-2 shrink-0" />
-                    {feature}
-                  </li>
-                ))}
-              </ul>
+              {service.features.length > 0 && (
+                <ul className="space-y-2 border-t border-white/10 pt-4">
+                  {service.features.map((feature) => (
+                    <li key={feature} className="text-sm text-gray-300 flex items-start gap-2.5">
+                      <span className="w-1 h-1 rounded-full bg-teal-400/70 mt-2 shrink-0" />
+                      {feature}
+                    </li>
+                  ))}
+                </ul>
+              )}
             </div>
           ))}
         </div>

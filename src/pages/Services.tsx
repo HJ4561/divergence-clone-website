@@ -3,65 +3,60 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Cpu, GitBranch, Users, Radio, ArrowRight, CheckCircle, Download } from 'lucide-react';
 
-const services = [
-  {
-    icon: Cpu,
-    title: "Agentic Workflow Development",
-    description: "We take a workflow you already run — spec to simulation to report — and turn it into an AI agent that runs it end to end, unattended, with every step logged and reviewable.",
-    features: [
-      "Automated geometry, meshing, and setup",
-      "Optimization loops with verified results",
-      "Auto-generated customer-facing reports",
-      "Integration with CAD, PLM, and your pipeline"
-    ],
-    whatsappMessage: "Hi! I'm interested in the Agentic Workflow Development template. Can you share the code template for automating simulation workflows?"
-  },
-  {
-    icon: GitBranch,
-    title: "Integration & Deployment",
-    description: "AI automation deployed inside your solver environment and your security perimeter — tested, validated, and maintained as vendor releases ship.",
-    features: [
-      "Enterprise solver environment setup",
-      "On-premises or private deployment",
-      "Security and compliance configuration",
-      "We carry the maintenance burden"
-    ],
-    whatsappMessage: "Hi! I'm interested in the Integration & Deployment template. Can you share the code template for deploying AI automation in my solver environment?"
-  },
-  {
-    icon: Users,
-    title: "AI Enablement for Engineering Teams",
-    description: "Your engineers build the automation themselves — on our platform and domain primitives — so you capture the capability without carrying the maintenance burden alone.",
-    features: [
-      "Hands-on automation workshops",
-      "Build on our solver-integration layer",
-      "Playbooks, documentation, and mentorship"
-    ],
-    whatsappMessage: "Hi! I'm interested in the AI Enablement for Engineering Teams template. Can you share the code template for building automation in-house?"
-  },
-  {
-    icon: Radio,
-    title: "Dedicated RF & EM Engineering",
-    description: "Deep electromagnetic expertise on demand — for complex simulations, wireless system modeling, and trusted subcontracting on third-party projects.",
-    features: [
-      "Antenna, MIMO, and multi-user network studies",
-      "Ray-traced propagation with Ansys SBR+",
-      "OFDMA and link-level KPI extraction (SINR, capacity, BLER)",
-      "Complex simulation troubleshooting & custom algorithms"
-    ],
-    whatsappMessage: "Hi! I'm interested in the Dedicated RF & EM Engineering template. Can you share the code template for RF and EM simulation workflows?"
-  }
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface ServiceCard {
+  id: number;
+  heading: string;
+  description: string;
+  icon: string;
+  image: string | null;
+  points: string;
+  points_list: string[];
+  order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-// Animated Background - Subtle and matches theme
+interface ServiceSectionData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  services: ServiceCard[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// ICON MAP - Map API icon strings to Lucide components
+// ============================================================
+const iconMap: Record<string, React.ElementType> = {
+  'cpu': Cpu,
+  'git-branch': GitBranch,
+  'users': Users,
+  'radio': Radio,
+  'Cpu': Cpu,
+  'GitBranch': GitBranch,
+  'Users': Users,
+  'Radio': Radio,
+};
+
+function getIcon(iconName: string): React.ElementType {
+  return iconMap[iconName] || Cpu;
+}
+
+// ============================================================
+// ANIMATED BACKGROUND
+// ============================================================
 function AnimatedBackground() {
   return (
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
-      {/* Floating gradient orbs - subtle */}
       <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-teal-400/5 rounded-full blur-3xl animate-orb-float"></div>
       <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-teal-400/5 rounded-full blur-3xl animate-orb-float-delay"></div>
       
-      {/* Grid pattern - matches your theme */}
       <div className="absolute inset-0 opacity-[0.03]">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -73,7 +68,6 @@ function AnimatedBackground() {
         </svg>
       </div>
       
-      {/* Floating particles - subtle */}
       <div className="absolute top-1/5 left-1/4 w-1.5 h-1.5 bg-teal-400/20 rounded-full animate-particle-float"></div>
       <div className="absolute top-1/3 right-1/5 w-1.5 h-1.5 bg-teal-400/15 rounded-full animate-particle-float-delay"></div>
       <div className="absolute bottom-1/3 left-1/5 w-1.5 h-1.5 bg-teal-400/20 rounded-full animate-particle-float-delay-2"></div>
@@ -82,7 +76,9 @@ function AnimatedBackground() {
   );
 }
 
-// Stats Counter - matches theme
+// ============================================================
+// STATS COUNTER
+// ============================================================
 function StatItem({ value, label, delay }: { value: string; label: string; delay: number }) {
   const [count, setCount] = useState(0);
 
@@ -121,13 +117,162 @@ function StatItem({ value, label, delay }: { value: string; label: string; delay
   );
 }
 
+// ============================================================
+// SCROLL TO TOP COMPONENT
+// ============================================================
+function ScrollToTop() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <>
+      {isVisible && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 right-6 z-50 p-3 bg-teal-400/10 hover:bg-teal-400/20 text-teal-300 rounded-full border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300 hover:scale-110 shadow-lg shadow-teal-500/10"
+          aria-label="Scroll to top"
+        >
+          <svg 
+            className="w-5 h-5" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M5 10l7-7m0 0l7 7m-7-7v18" 
+            />
+          </svg>
+        </button>
+      )}
+    </>
+  );
+}
+
+// ============================================================
+// MAIN SERVICES PAGE
+// ============================================================
 export default function ServicesPage() {
+  const [data, setData] = useState<ServiceSectionData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const phoneNumber = process.env.REACT_APP_WHATSAPP_NUMBER || '1234567890';
+
+  // ============================================================
+  // FETCH SERVICES DATA
+  // Endpoint: GET /api/website-data/ and extracts service_section
+  // ============================================================
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('https://client-divergent.vercel.app/api/website-data/');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.status}`);
+        }
+        
+        const json = await response.json();
+        
+        // Extract service_section from the response
+        const serviceData = json.service_section || null;
+        console.log('Services Data:', serviceData); // Debug log
+        setData(serviceData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching services data:', err);
+        setError('Failed to load services. Please refresh the page.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // ============================================================
+  // SCROLL TO TOP ON PAGE LOAD
+  // ============================================================
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   const handleWhatsAppClick = (message: string) => {
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
   };
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-ink-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-teal-400/30 border-t-teal-400 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading services...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-ink-950 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <p className="text-red-400 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="text-teal-300 hover:text-teal-200 transition-colors"
+          >
+            Try again →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If no data, show error state
+  if (!data || !data.services || data.services.length === 0) {
+    return (
+      <div className="min-h-screen bg-ink-950 pt-16 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-24">
+            <p className="text-gray-400">No services available</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Map API services to the format expected by the UI
+  const services = data.services.map((service) => ({
+    icon: getIcon(service.icon),
+    title: service.heading,
+    description: service.description,
+    features: service.points_list && service.points_list.length > 0 
+      ? service.points_list 
+      : [],
+    whatsappMessage: `Hi! I'm interested in the ${service.heading} template. Can you share the code template for this service?`
+  }));
 
   return (
     <div className="min-h-screen bg-ink-950 pt-16 overflow-hidden">
@@ -200,10 +345,10 @@ export default function ServicesPage() {
               &sect; 03 / SERVICES
             </span>
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight text-white mb-5 max-w-2xl">
-              Our <span className="text-teal-300">Services</span>
+              {data.heading}
             </h1>
             <p className="text-base sm:text-lg text-gray-300 leading-relaxed max-w-xl">
-              End-to-end AI automation for simulation-driven engineering teams — done for you, or built with your engineers so your team owns it.
+              {data.description}
             </p>
             <div className="mt-6">
               <Link
@@ -217,7 +362,7 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* Stats Section */}
+      {/* Stats Section - Using static stats since they're not in the API */}
       <section className="py-10 border-b border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
@@ -255,14 +400,16 @@ export default function ServicesPage() {
                     {service.description}
                   </p>
 
-                  <ul className="space-y-2 border-t border-white/10 pt-4">
-                    {service.features.map((feature) => (
-                      <li key={feature} className="text-sm text-gray-300 flex items-start gap-2.5 group-hover:text-gray-200 transition-colors duration-300">
-                        <CheckCircle className="w-4 h-4 text-teal-300/70 shrink-0 mt-0.5" strokeWidth={1.5} />
-                        {feature}
-                      </li>
-                    ))}
-                  </ul>
+                  {service.features.length > 0 && (
+                    <ul className="space-y-2 border-t border-white/10 pt-4">
+                      {service.features.map((feature) => (
+                        <li key={feature} className="text-sm text-gray-300 flex items-start gap-2.5 group-hover:text-gray-200 transition-colors duration-300">
+                          <CheckCircle className="w-4 h-4 text-teal-300/70 shrink-0 mt-0.5" strokeWidth={1.5} />
+                          {feature}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
 
                   {/* Action Buttons */}
                   <div className="mt-5 pt-4 border-t border-white/10 flex flex-wrap items-center gap-3">
@@ -307,6 +454,9 @@ export default function ServicesPage() {
           </div>
         </div>
       </section>
+
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
     </div>
   );
 }

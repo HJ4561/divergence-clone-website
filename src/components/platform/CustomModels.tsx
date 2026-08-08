@@ -1,22 +1,41 @@
+// src/components/platform/CustomModels.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const items = [
-  {
-    title: "Your Data, Your Models",
-    description: "Train AI surrogate models on your proprietary CAE and simulation datasets. Get near-instant predictions for design parameters that currently require full simulation runs.",
-    tag: "Automotive · Aerospace · Wind Energy · Manufacturing",
-  },
-  {
-    title: "Accelerate Design Exploration",
-    description: "Explore thousands of design variations in minutes using AI predictions. Identify optimal configurations before committing to expensive full-fidelity simulations.",
-  },
-  {
-    title: "Enterprise-Grade & Secure",
-    description: "Models are trained and deployed within your secure environment. Your proprietary simulation data and trained models never leave your infrastructure.",
-  },
-];
+// ============================================================
+// TYPES - Based on API response from /api/platform/sections/
+// ============================================================
+interface ComingSoon {
+  id: number;
+  heading: string;
+  description: string;
+  title: string;
+  icon: string;
+  image: string | null;
+  order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
+interface PlatformSectionData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  operating_benefits: any[];
+  work_with_us: any[];
+  coming_soon: ComingSoon[];
+  demonstrations: any[];
+  built_for_production: any[];
+  pricing_plans: any[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// NEURAL FIELD BACKGROUND
+// ============================================================
 const nodes: [number, number][] = [
   [80, 60], [220, 140], [150, 280], [340, 90], [420, 230], [520, 60],
   [610, 180], [700, 300], [780, 80], [860, 220], [950, 120], [1040, 260],
@@ -52,7 +71,77 @@ function NeuralField() {
   );
 }
 
-export default function CustomModels() {
+// ============================================================
+// MAIN CUSTOM MODELS COMPONENT
+// ============================================================
+interface CustomModelsProps {
+  data?: PlatformSectionData | null;
+  loading?: boolean;
+}
+
+export default function CustomModels({ data, loading = false }: CustomModelsProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="h-8 w-32 bg-ink-800 rounded mb-6"></div>
+            <div className="h-10 w-2/3 bg-ink-800 rounded mb-4"></div>
+            <div className="h-4 w-1/2 bg-ink-800 rounded mb-10"></div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-64 bg-ink-800 rounded-xl"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Custom Models content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API coming_soon items to the format expected by the UI
+  const items = data.coming_soon && data.coming_soon.length > 0
+    ? data.coming_soon.map((item) => ({
+        title: item.title || item.heading,
+        description: item.description,
+        tag: "Coming Soon · AI Models",
+      }))
+    : [];
+
+  const hasComingSoon = data.coming_soon && data.coming_soon.length > 0;
+
+  // If no items, show empty state
+  if (items.length === 0) {
+    return (
+      <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">No custom models available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Use the heading from the API data
+  // This is the correct heading for this section
+  const heading = data.heading || "Turn Your Simulation Data Into Custom AI Models";
+  const description = data.description || "Your team runs thousands of simulations. Divergent Physics helps you train proprietary AI models on that data — so you can predict performance in seconds instead of hours.";
+
   return (
     <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">
       <style>{`
@@ -63,15 +152,15 @@ export default function CustomModels() {
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <span className="inline-block text-[11px] font-mono tracking-widest uppercase text-amber-400 border border-amber-400/40 bg-amber-400/5 rounded px-3 py-1 mb-5 md:mb-6">
-          Coming Soon
+          {hasComingSoon ? 'Coming Soon' : 'Custom Models'}
         </span>
 
         <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 md:mb-4 text-white max-w-3xl">
-          Turn Your Simulation Data Into Custom AI Models
+          {heading}
         </h2>
 
         <p className="text-sm md:text-base text-gray-400 max-w-2xl mb-10 md:mb-12 leading-relaxed">
-          Your team runs thousands of simulations. Divergent Physics helps you train proprietary AI models on that data — so you can predict performance in seconds instead of hours.
+          {description}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-px bg-white/10 rounded-xl overflow-hidden mb-10">

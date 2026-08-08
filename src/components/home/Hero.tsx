@@ -1,13 +1,37 @@
-import React from 'react';
+// src/components/home/Hero.tsx
 import { Link } from 'react-router-dom';
 
-const pipeline = [
-  { label: 'CAD', description: 'Your model, pulled straight from the CAD file you already have.', icon: 'cad' },
-  { label: 'SIMULATE', description: 'The agent runs the solver — setup, sweep, and optimization, unattended.', icon: 'sim' },
-  { label: 'VERIFY', description: 'Results checked against your spec before anything is called done.', icon: 'check' },
-  { label: 'DATASHEET', description: 'A customer-ready report, generated automatically from the run.', icon: 'doc' },
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface HeroData {
+  id: number;
+  title: string;
+  subtitle: string;
+  description: string;
+  built_by: string;
+  call_to_action_1: string;
+  call_to_action_2: string;
+  is_active: boolean;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
 
+interface PipelineStep {
+  id: number;
+  hero_section: number;
+  step_name: string;
+  description: string;
+  icon: string;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// STEP ICON COMPONENT
+// ============================================================
 function StepIcon({ type }: { type: string }) {
   return (
     <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" aria-hidden="true">
@@ -35,7 +59,28 @@ function StepIcon({ type }: { type: string }) {
   );
 }
 
-function LivePipelinePanel() {
+// ============================================================
+// LIVE PIPELINE PANEL
+// ============================================================
+function LivePipelinePanel({ steps }: { steps: PipelineStep[] }) {
+  // If no steps provided, show a loading/empty state
+  if (!steps || steps.length === 0) {
+    return (
+      <div className="relative bg-ink-900 p-2 rounded-xl border border-white/10 h-full">
+        <div className="bg-ink-950 rounded-lg border border-white/10 p-6 md:p-7 h-full flex flex-col items-center justify-center">
+          <p className="text-gray-500 text-sm">No pipeline data available</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Map API steps to pipeline format
+  const pipelineSteps = steps.map(step => ({
+    label: step.step_name,
+    description: step.description,
+    icon: step.icon || 'cad'
+  }));
+
   return (
     <div className="relative">
       <div className="absolute -top-10 -right-10 w-40 h-40 bg-teal-400/10 rounded-full blur-3xl animate-[float_10s_ease-in-out_infinite]" />
@@ -61,7 +106,7 @@ function LivePipelinePanel() {
               style={{ marginLeft: '-2px' }}
             />
             <div className="flex flex-col gap-8">
-              {pipeline.map((step, i) => (
+              {pipelineSteps.map((step, i) => (
                 <div key={step.label} className="relative flex gap-4 items-start">
                   <div
                     className="relative z-10 w-11 h-11 rounded-full bg-ink-950 border border-white/10 flex items-center justify-center shrink-0 animate-pulse-chase"
@@ -102,7 +147,55 @@ function LivePipelinePanel() {
   );
 }
 
-export default function Hero() {
+// ============================================================
+// MAIN HERO COMPONENT
+// ============================================================
+interface HeroProps {
+  data?: HeroData | null;
+  pipelineSteps?: PipelineStep[];
+  loading?: boolean;
+}
+
+export default function Hero({ data, pipelineSteps = [], loading = false }: HeroProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="relative overflow-hidden bg-ink-950 bg-grid pt-20 pb-16 md:pt-24 md:pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-10 lg:gap-12 items-stretch">
+            <div className="animate-pulse">
+              <div className="h-4 w-32 bg-ink-800 rounded mb-6"></div>
+              <div className="h-12 w-3/4 bg-ink-800 rounded mb-4"></div>
+              <div className="h-4 w-full bg-ink-800 rounded mb-2"></div>
+              <div className="h-4 w-5/6 bg-ink-800 rounded mb-2"></div>
+              <div className="h-4 w-2/3 bg-ink-800 rounded mb-6"></div>
+              <div className="flex gap-4">
+                <div className="h-10 w-48 bg-ink-800 rounded"></div>
+                <div className="h-10 w-48 bg-ink-800 rounded"></div>
+              </div>
+            </div>
+            <div className="animate-pulse">
+              <div className="h-64 bg-ink-800 rounded-xl"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="relative overflow-hidden bg-ink-950 bg-grid pt-20 pb-16 md:pt-24 md:pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Hero content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative overflow-hidden bg-ink-950 bg-grid pt-20 pb-16 md:pt-24 md:pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,14 +212,14 @@ export default function Hero() {
               className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight text-white opacity-0 animate-fade-up"
               style={{ animationDelay: '0.15s' }}
             >
-              AI Transformation for Simulation Engineering
+              {data.title}
             </h1>
 
             <p
               className="mt-5 text-base sm:text-lg text-gray-300 max-w-xl leading-relaxed opacity-0 animate-fade-up"
               style={{ animationDelay: '0.25s' }}
             >
-              We design, build, and maintain AI agents that run your real workflows — CAD to simulation to customer-ready datasheet — inside the solver stack your team already uses.
+              {data.description}
             </p>
 
             <p
@@ -144,7 +237,7 @@ export default function Hero() {
               className="mt-3 text-sm md:text-base text-gray-400 max-w-xl italic opacity-0 animate-fade-up"
               style={{ animationDelay: '0.42s' }}
             >
-              Built by PhDs in electromagnetics and applied mathematics who write automation code every day.
+              {data.built_by}
             </p>
 
             <div
@@ -156,13 +249,13 @@ export default function Hero() {
                 className="relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base text-center border border-white/5 hover:border-white/10"
               >
                 <span className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-teal-400 to-blue-500 opacity-40 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300"></span>
-                <span className="relative z-10">Book a Free Scoping Call &rarr;</span>
+                <span className="relative z-10">{data.call_to_action_1} &rarr;</span>
               </Link>
               <a
                 href="#case-study"
                 className="bg-transparent hover:bg-white/5 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg border border-white/15 transition-colors duration-200 text-sm md:text-base text-center"
               >
-                Walk Through a Real Pilot
+                {data.call_to_action_2}
               </a>
             </div>
 
@@ -197,7 +290,7 @@ export default function Hero() {
           </div>
 
           <div className="opacity-0 animate-fade-up" style={{ animationDelay: '0.3s' }}>
-            <LivePipelinePanel />
+            <LivePipelinePanel steps={pipelineSteps} />
           </div>
         </div>
       </div>

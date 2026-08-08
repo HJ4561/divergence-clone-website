@@ -1,23 +1,40 @@
+// src/components/platform/WorkflowSteps.tsx
 import React from 'react';
 
-const steps = [
-  {
-    number: "01",
-    title: "Intelligent CAD-to-Simulation",
-    description: "AI automatically imports, defeatures, and optimizes your CAD geometry for your solver — removing irrelevant features and generating simulation-ready mesh settings without expert tuning.",
-  },
-  {
-    number: "02",
-    title: "Autonomous Simulation Management",
-    description: "AI monitors solver jobs, detects convergence issues, and auto-adjusts settings. Get reliable results without manual debugging or restarts.",
-  },
-  {
-    number: "03",
-    title: "Post-Processing & Scenario Exploration",
-    description: "Automatically extract key insights from your simulations in minutes instead of hours — S-parameters, field data, and performance metrics. Compare design scenarios with natural language requests and make engineering decisions faster.",
-  },
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface OperatingBenefit {
+  id: number;
+  heading: string;
+  description: string;
+  impact: string;
+  icon: string;
+  image: string | null;
+  order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
+interface PlatformSectionData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  operating_benefits: OperatingBenefit[];
+  work_with_us: any[];
+  coming_soon: any[];
+  demonstrations: any[];
+  built_for_production: any[];
+  pricing_plans: any[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// ANIMATED BACKGROUND
+// ============================================================
 function WaveformBackground() {
   const wavePath = "M0,100 Q87.5,30 175,100 T350,100 T525,100 T700,100";
   return (
@@ -47,7 +64,75 @@ function RadiationArc() {
   );
 }
 
-export default function WorkflowSteps() {
+// ============================================================
+// MAIN WORKFLOW STEPS COMPONENT
+// ============================================================
+interface WorkflowStepsProps {
+  data?: PlatformSectionData | null;
+  loading?: boolean;
+}
+
+export default function WorkflowSteps({ data, loading = false }: WorkflowStepsProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="relative overflow-hidden bg-ink-950 bg-grid py-20 md:py-28 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="max-w-2xl mx-auto bg-ink-800/50 rounded-xl p-6 md:p-8">
+              <div className="h-6 w-32 bg-ink-800 rounded mb-4"></div>
+              <div className="h-10 w-2/3 bg-ink-800 rounded mb-8"></div>
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="py-5 border-t border-ink-800">
+                  <div className="flex items-baseline gap-3 mb-2">
+                    <div className="h-4 w-8 bg-ink-800 rounded"></div>
+                    <div className="h-6 w-1/2 bg-ink-800 rounded"></div>
+                  </div>
+                  <div className="h-4 w-full bg-ink-800 rounded"></div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="relative overflow-hidden bg-ink-950 bg-grid py-20 md:py-28 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Workflow steps not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API operating_benefits to steps format - ONLY from API
+  const steps = data.operating_benefits && data.operating_benefits.length > 0
+    ? data.operating_benefits.map((benefit, index) => ({
+        number: String(index + 1).padStart(2, '0'),
+        title: benefit.heading,
+        description: benefit.description,
+      }))
+    : [];
+
+  // If no steps from API, show error state (no dummy data)
+  if (steps.length === 0) {
+    return (
+      <section className="relative overflow-hidden bg-ink-950 bg-grid py-20 md:py-28 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">No workflow steps available from API</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative overflow-hidden bg-ink-950 bg-grid py-20 md:py-28 border-t border-white/10">
       <style>{`

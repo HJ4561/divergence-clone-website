@@ -1,31 +1,74 @@
+// src/components/home/QuestionsSection.tsx
 import React, { useState } from 'react';
 import { ChevronDown, Shield, Users, Sparkles, Zap } from 'lucide-react';
 
-const questions = [
-  {
-    q: "Can this run air-gapped?",
-    a: "Yes. Deployments run on-premises inside your security perimeter, including fully local LLM inference — no design data, geometry, or results leave your network.",
-    icon: Shield,
-  },
-  {
-    q: "Who owns what we build?",
-    a: "You own the workflows, code, and deliverables produced for your designs. We retain the underlying platform. Every engagement is scoped that way in writing, up front.",
-    icon: Users,
-  },
-  {
-    q: "What happens when the next solver version ships?",
-    a: "We track vendor releases and integration drift as part of the engagement, so the automation keeps working — that maintenance burden is ours, not your engineers'.",
-    icon: Sparkles,
-  },
-  {
-    q: "How do you charge?",
-    a: "Milestone-gated, fixed-scope phases with acceptance criteria you define. A milestone passes, an invoice releases. No open-ended hourly billing — and for ongoing support, a monthly retainer is available.",
-    icon: Zap,
-  },
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface FAQ {
+  id: number;
+  question: string;
+  answer: string;
+  order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-export default function QuestionsSection() {
+// ============================================================
+// MAIN QUESTIONS SECTION
+// ============================================================
+interface QuestionsSectionProps {
+  data?: FAQ[];
+  loading?: boolean;
+}
+
+export default function QuestionsSection({ data, loading = false }: QuestionsSectionProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="relative py-16 md:py-20 bg-ink-900 border-t border-white/10 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="animate-pulse">
+              <div className="h-4 w-32 bg-ink-800 rounded mb-6"></div>
+              <div className="h-10 w-2/3 bg-ink-800 rounded mb-6"></div>
+              <div className="space-y-4">
+                {[1, 2, 3, 4].map((i) => (
+                  <div key={i} className="h-16 bg-ink-800 rounded-xl"></div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data || data.length === 0) {
+    return (
+      <section className="relative py-16 md:py-20 bg-ink-900 border-t border-white/10 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            <div className="text-center py-12">
+              <p className="text-gray-400">FAQ content not available</p>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API data to questions format with icons
+  const questions = data.map((faq, index) => ({
+    q: faq.question,
+    a: faq.answer,
+    // Cycle through icons based on index
+    icon: [Shield, Users, Sparkles, Zap][index % 4] || Shield,
+  }));
 
   return (
     <section className="relative py-16 md:py-20 bg-ink-900 border-t border-white/10 overflow-hidden">

@@ -1,33 +1,98 @@
+// src/components/home/HowWeWork.tsx
 import React from 'react';
 
-const steps = [
-  {
-    number: "1",
-    id: "discovery",
-    title: "Discovery",
-    description: "Walk us through one workflow — a 30-minute screen share of the work your engineers repeat most. We tell you on the spot whether it's automatable, what a pilot looks like, and what it would save. Free, under NDA.",
-  },
-  {
-    number: "2",
-    id: "pilot",
-    title: "Pilot",
-    description: "We embed with your team and encode one workflow you already run — weekly working sessions, about an hour of your engineers' time per week. You judge the results against your own acceptance criteria.",
-  },
-  {
-    number: "3",
-    id: "deploy",
-    title: "Deploy",
-    description: "The automation moves into your environment — your security perimeter, your solvers, your data — with testing and validation before anything touches production work.",
-  },
-  {
-    number: "4",
-    id: "scale-support",
-    title: "Scale & Support",
-    description: "From one workflow to a fleet: engineers set direction and review while agents fan out across products, specs, and what-if studies. We maintain it as your solvers evolve.",
-  },
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface HowWeWorkStep {
+  id: number;
+  how_we_work: number;
+  step_number: number;
+  title: string;
+  description: string;
+  image: string | null;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
 
-export default function HowWeWork() {
+interface HowWeWorkData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  steps: HowWeWorkStep[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// MAIN HOW WE WORK COMPONENT
+// ============================================================
+interface HowWeWorkProps {
+  data?: HowWeWorkData | null;
+  loading?: boolean;
+}
+
+export default function HowWeWork({ data, loading = false }: HowWeWorkProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="mb-6 md:mb-8">
+              <div className="h-4 w-32 bg-ink-800 rounded"></div>
+            </div>
+            <div className="h-10 w-2/3 bg-ink-800 rounded mb-4"></div>
+            <div className="h-4 w-1/2 bg-ink-800 rounded mb-10"></div>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-48 bg-ink-800 rounded-xl"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">How We Work content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API steps to the format expected by the UI
+  const steps = data.steps && data.steps.length > 0
+    ? data.steps.map((step) => ({
+        number: String(step.step_number),
+        id: step.title.toLowerCase().replace(/ & /g, '-').replace(/ /g, '-'),
+        title: step.title,
+        description: step.description,
+      }))
+    : [];
+
+  // If no steps, show empty state
+  if (steps.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">No steps available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="process" className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -38,11 +103,11 @@ export default function HowWeWork() {
         </div>
 
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 md:mb-4 text-white">
-          How We Work
+          {data.heading}
         </h2>
 
         <p className="text-sm md:text-base text-gray-400 max-w-2xl mb-10 md:mb-12 leading-relaxed">
-          Your team keeps operating normally throughout — about an hour of engineer time per week during a pilot. Agents do the clicking; your engineers review the results.
+          {data.description}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-px bg-white/10 rounded-xl overflow-hidden">

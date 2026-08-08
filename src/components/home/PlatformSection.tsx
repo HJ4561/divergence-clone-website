@@ -1,6 +1,34 @@
+// src/components/home/PlatformSection.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface PlatformFeature {
+  id: number;
+  platform: number;
+  title: string;
+  description: string;
+  image: string | null;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface PlatformData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  features: PlatformFeature[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// SVG COMPONENTS
+// ============================================================
 function S11Chart() {
   const traces = [
     { d: 'M0,55 L20,50 L40,35 L52,15 L60,32 L80,50 L100,52 L120,48 L140,40 L160,44 L180,50 L200,52', color: '#5eead4', label: 'Feed A' },
@@ -60,7 +88,50 @@ function AgentChat() {
   );
 }
 
-export default function PlatformSection() {
+// ============================================================
+// MAIN PLATFORM SECTION
+// ============================================================
+interface PlatformSectionProps {
+  data?: PlatformData | null;
+  loading?: boolean;
+}
+
+export default function PlatformSection({ data, loading = false }: PlatformSectionProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="mb-6 md:mb-8">
+              <div className="h-4 w-32 bg-ink-800 rounded"></div>
+            </div>
+            <div className="h-10 w-2/3 bg-ink-800 rounded mb-4"></div>
+            <div className="h-4 w-full bg-ink-800 rounded mb-6"></div>
+            <div className="h-64 bg-ink-800 rounded-xl mb-4"></div>
+            <div className="flex gap-4">
+              <div className="h-10 w-40 bg-ink-800 rounded"></div>
+              <div className="h-10 w-40 bg-ink-800 rounded"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Platform content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -71,11 +142,11 @@ export default function PlatformSection() {
         </div>
 
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 md:mb-4 text-white">
-          Built on Our Own Platform
+          {data.heading}
         </h2>
 
         <p className="text-sm md:text-base text-gray-400 max-w-3xl mb-6 md:mb-8 leading-relaxed">
-          Every engagement is delivered on the agent platform we build and maintain — the RF and EM understanding layer that turns a request into a correct simulation. Prefer self-serve? Run the same agents yourself.
+          {data.description}
         </p>
 
         <div className="bg-ink-900 p-2 md:p-3 rounded-xl border border-white/10 mb-4">

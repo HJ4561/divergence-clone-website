@@ -1,7 +1,25 @@
+// src/components/home/BringUsWorkflow.tsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-const logLines = [
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface GetStartedData {
+  id: number;
+  heading: string;
+  description: string;
+  image: string | null;
+  call_to_action: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// WORKFLOW TERMINAL COMPONENT
+// ============================================================
+const defaultLogLines = [
   { text: '$ agent run feed_position_sweep.aedt', delay: 200 },
   { text: '→ loading catalog model… done', delay: 900 },
   { text: '→ solving 3 variations in HFSS… done', delay: 1000 },
@@ -10,7 +28,7 @@ const logLines = [
   { text: '✓ workflow complete — 6h 47m saved', delay: 900, accent: true },
 ];
 
-function WorkflowTerminal() {
+function WorkflowTerminal({ logLines = defaultLogLines }) {
   const [visible, setVisible] = useState(0);
 
   useEffect(() => {
@@ -34,7 +52,7 @@ function WorkflowTerminal() {
       cancelled = true;
       window.clearTimeout(first);
     };
-  }, []);
+  }, [logLines]);
 
   const done = visible >= logLines.length;
 
@@ -74,7 +92,20 @@ function WorkflowTerminal() {
   );
 }
 
-export default function BringUsWorkflow() {
+// ============================================================
+// MAIN BRING US WORKFLOW COMPONENT
+// ============================================================
+interface BringUsWorkflowProps {
+  data?: GetStartedData | null;
+}
+
+export default function BringUsWorkflow({ data }: BringUsWorkflowProps) {
+  // Use API data if available, otherwise fallback to defaults
+  const heading = data?.heading || 'Bring Us the Workflow Your Engineers Hate Repeating';
+  const description = data?.description || 
+    "In one call we'll tell you whether it's automatable, what a pilot looks like, and what it would save you. No slideware — we show you a real workflow running.";
+  const callToAction = data?.call_to_action || 'Book a Consultation';
+
   return (
     <section className="py-16 md:py-24 bg-ink-950 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -85,10 +116,10 @@ export default function BringUsWorkflow() {
             </span>
 
             <h2 className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-semibold mb-4 md:mb-6 text-white leading-[1.1]">
-              Bring Us the Workflow Your Engineers Hate Repeating
+              {heading}
             </h2>
             <p className="text-base md:text-lg text-gray-300 mb-8 leading-relaxed max-w-lg">
-              In one call we'll tell you whether it's automatable, what a pilot looks like, and what it would save you. No slideware — we show you a real workflow running.
+              {description}
             </p>
 
             <div className="bg-ink-900 p-6 md:p-7 rounded-xl border border-white/10 max-w-md">
@@ -100,7 +131,7 @@ export default function BringUsWorkflow() {
                 to="/contact"
                 className="inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-5 py-2 rounded-lg transition-colors duration-200 text-sm"
               >
-                Book a Consultation &rarr;
+                {callToAction} &rarr;
               </Link>
               <p className="text-gray-400 text-sm mt-4 leading-relaxed">
                 Not ready for a call?{' '}

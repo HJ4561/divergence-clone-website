@@ -1,100 +1,64 @@
 // src/pages/Projects.tsx
+import React, { useState, useEffect } from 'react';
 import { Cpu, Radio, Zap, Sparkles, Shield, Users, CheckCircle } from 'lucide-react';
 
-const projects = [
-  {
-    id: 1,
-    title: 'Antenna-in-Package Optimization',
-    description: 'Automated HFSS workflow for configurable antenna modules, reducing setup time from days to 1.5 hours unattended.',
-    fullDescription: 'A manufacturer of configurable antenna-in-package modules needed every customer configuration verified, optimized, and documented in Ansys HFSS — an engineer-day of expert work per part. We encoded their process as an agent-run workflow that automates the entire simulation pipeline.',
-    tags: ['Ansys HFSS', 'Bayesian Optimization', 'Automation'],
-    icon: Cpu,
-    results: [
-      '1.5 hours unattended run time',
-      '90% reduction in manual setup',
-      '20+ design candidates explored per run',
-      'Full audit trail with replayable runs'
-    ],
-    technologies: ['Ansys HFSS', 'Python', 'Bayesian Optimization', 'AI Agents']
-  },
-  {
-    id: 2,
-    title: 'Fortune-100 Consumer Electronics',
-    description: 'Milestone-gated automation program for RF systems team, delivering verified simulation workflows with acceptance criteria.',
-    fullDescription: 'We delivered a milestone-gated automation program for the RF systems team of a Fortune-100 consumer-electronics manufacturer — invoiced against acceptance criteria, not hours. Developed with RF engineers across aerospace, telecom, defense, and advanced hardware.',
-    tags: ['RF Systems', 'Integration', 'Enterprise'],
-    icon: Shield,
-    results: [
-      'Milestone-gated delivery',
-      'Verified simulation workflows',
-      'Enterprise-grade integration',
-      'Acceptance criteria based invoicing'
-    ],
-    technologies: ['RF Systems', 'Enterprise Integration', 'Automation']
-  },
-  {
-    id: 3,
-    title: 'Aerospace Defense Workflow',
-    description: 'Automated meshing and simulation setup for complex radar systems, reducing manual errors and setup time.',
-    fullDescription: 'Complex radar systems require precise meshing and simulation setup. We automated the entire workflow, eliminating manual errors that previously plagued the process. Engineers can now focus on analysis rather than setup.',
-    tags: ['Radar', 'Meshing', 'Aerospace'],
-    icon: Radio,
-    results: [
-      '100% reduction in manual errors',
-      'Automated meshing setup',
-      'Radar system optimization',
-      'Reduced simulation time by 60%'
-    ],
-    technologies: ['Radar Systems', 'Meshing', 'Automation']
-  },
-  {
-    id: 4,
-    title: 'Medical Device Simulation',
-    description: 'AI agent for medical device RF testing and compliance reporting, automating data extraction and validation.',
-    fullDescription: 'Medical device manufacturers face stringent compliance requirements. Our AI agent automates RF testing and compliance reporting, extracting and validating data while maintaining complete audit trails for regulatory submissions.',
-    tags: ['Medical Devices', 'Compliance', 'Testing'],
-    icon: Users,
-    results: [
-      'Automated compliance reporting',
-      'Complete audit trails',
-      'Reduced testing time by 70%',
-      'Regulatory-ready documentation'
-    ],
-    technologies: ['Medical Device Testing', 'Compliance', 'RF Testing']
-  },
-  {
-    id: 5,
-    title: '5G Massive MIMO Optimization',
-    description: 'AI-driven optimization of massive MIMO antenna arrays for 5G base stations, reducing design cycle time by 60%.',
-    fullDescription: 'Massive MIMO antenna arrays for 5G base stations require complex optimization. Our AI-driven approach explores thousands of design configurations automatically, reducing the design cycle from months to weeks.',
-    tags: ['5G', 'MIMO', 'Antenna Arrays'],
-    icon: Zap,
-    results: [
-      '60% reduction in design cycle',
-      'Thousands of configurations explored',
-      'Optimal antenna array design',
-      'AI-driven optimization'
-    ],
-    technologies: ['5G', 'MIMO', 'Antenna Design', 'AI Optimization']
-  },
-  {
-    id: 6,
-    title: 'Satellite Communication System',
-    description: 'End-to-end automation for satellite communication system simulation, from orbital mechanics to RF  budget analysis.',
-    fullDescription: 'Satellite communication systems require complex multi-domain simulation. We built an end-to-end automation pipeline that handles everything from orbital mechanics calculations to RF  budget analysis, all in one integrated workflow.',
-    tags: ['Satellite', 'RF ', 'Orbital'],
-    icon: Sparkles,
-    results: [
-      'End-to-end automation',
-      'Integrated orbital + RF simulation',
-      'Reduced analysis time by 80%',
-      'Complete system optimization'
-    ],
-    technologies: ['Satellite Systems', 'RF ', 'Orbital Mechanics']
-  }
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface ProjectCard {
+  id: number;
+  number: string;
+  heading: string;
+  description: string;
+  icon: string;
+  image: string | null;
+  points: string;
+  points_list: string[];
+  technologies: string;
+  technologies_list: string[];
+  key_results: string;
+  key_results_list: string[];
+  order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-// Scanline background effect
+interface ProjectSectionData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  projects: ProjectCard[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// ICON MAP - Map API icon strings to Lucide components
+// ============================================================
+const iconMap: Record<string, React.ElementType> = {
+  'cpu': Cpu,
+  'radio': Radio,
+  'zap': Zap,
+  'sparkles': Sparkles,
+  'shield': Shield,
+  'users': Users,
+  'Cpu': Cpu,
+  'Radio': Radio,
+  'Zap': Zap,
+  'Sparkles': Sparkles,
+  'Shield': Shield,
+  'Users': Users,
+};
+
+function getIcon(iconName: string): React.ElementType {
+  return iconMap[iconName] || Cpu;
+}
+
+// ============================================================
+// SCANLINE BACKGROUND
+// ============================================================
 function ScanlineField() {
   const wavePath = "M0,60 Q50,20 100,60 T200,60 T300,60 T400,60";
   return (
@@ -113,7 +77,174 @@ function ScanlineField() {
   );
 }
 
+// ============================================================
+// SCROLL TO TOP COMPONENT
+// ============================================================
+function ScrollToTop() {
+  const [isVisible, setIsVisible] = useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <>
+      {isVisible && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 right-6 z-50 p-3 bg-teal-400/10 hover:bg-teal-400/20 text-teal-300 rounded-full border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300 hover:scale-110 shadow-lg shadow-teal-500/10"
+          aria-label="Scroll to top"
+        >
+          <svg 
+            className="w-5 h-5" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M5 10l7-7m0 0l7 7m-7-7v18" 
+            />
+          </svg>
+        </button>
+      )}
+    </>
+  );
+}
+
+// ============================================================
+// MAIN PROJECTS PAGE
+// ============================================================
 export default function ProjectsPage() {
+  const [data, setData] = useState<ProjectSectionData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // ============================================================
+  // FETCH PROJECTS DATA
+  // Endpoint: GET /api/projects/sections/
+  // ============================================================
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        const response = await fetch('https://client-divergent.vercel.app/api/projects/sections/');
+        
+        if (!response.ok) {
+          throw new Error(`Failed to fetch data: ${response.status}`);
+        }
+        
+        const json = await response.json();
+        
+        // Handle different response formats
+        let sectionData = null;
+        if (Array.isArray(json) && json.length > 0) {
+          sectionData = json[0];
+        } else if (json && typeof json === 'object' && json.id) {
+          sectionData = json;
+        } else if (json && json.results && Array.isArray(json.results) && json.results.length > 0) {
+          sectionData = json.results[0];
+        }
+        
+        console.log('Projects Data:', sectionData); // Debug log
+        setData(sectionData);
+        setError(null);
+      } catch (err) {
+        console.error('Error fetching projects data:', err);
+        setError('Failed to load projects. Please refresh the page.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // ============================================================
+  // SCROLL TO TOP ON PAGE LOAD
+  // ============================================================
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-ink-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-2 border-teal-400/30 border-t-teal-400 rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading projects...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-ink-950 flex items-center justify-center">
+        <div className="text-center max-w-md">
+          <p className="text-red-400 mb-4">{error}</p>
+          <button
+            onClick={() => window.location.reload()}
+            className="text-teal-300 hover:text-teal-200 transition-colors"
+          >
+            Try again →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // If no data, show error state
+  if (!data || !data.projects || data.projects.length === 0) {
+    return (
+      <div className="min-h-screen bg-ink-950 pt-16 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-24">
+            <p className="text-gray-400">No projects available</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Map API projects to the format expected by the UI
+  const projects = data.projects.map((project) => ({
+    id: project.id,
+    title: project.heading,
+    description: project.description,
+    fullDescription: project.points_list && project.points_list.length > 0 
+      ? project.points_list.join(' ') 
+      : '',
+    tags: project.technologies_list && project.technologies_list.length > 0
+      ? project.technologies_list.slice(0, 4)
+      : [],
+    icon: getIcon(project.icon),
+    results: project.key_results_list && project.key_results_list.length > 0
+      ? project.key_results_list
+      : [],
+    technologies: project.technologies_list && project.technologies_list.length > 0
+      ? project.technologies_list
+      : [],
+  }));
+
   return (
     <div className="min-h-screen bg-ink-950 pt-16 overflow-hidden">
       <style>{`
@@ -232,10 +363,10 @@ export default function ProjectsPage() {
               &sect; 04 / PROJECTS
             </span>
             <h1 className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight text-white mb-5 max-w-2xl">
-              Our <span className="text-teal-300">Projects</span>
+              {data.heading}
             </h1>
             <p className="text-base sm:text-lg text-gray-300 leading-relaxed max-w-xl">
-              Real-world implementations of AI automation for simulation engineering.
+              {data.description}
             </p>
           </div>
         </div>
@@ -270,47 +401,56 @@ export default function ProjectsPage() {
                     {project.description}
                   </p>
                   
-                  <p className="text-sm text-gray-300 leading-relaxed mb-4 border-l-2 border-teal-400/30 pl-3">
-                    {project.fullDescription}
-                  </p>
+                  {project.fullDescription && (
+                    <p className="text-sm text-gray-300 leading-relaxed mb-4 border-l-2 border-teal-400/30 pl-3">
+                      {project.fullDescription}
+                    </p>
+                  )}
                   
                   {/* Technologies */}
-                  <div className="mb-4">
-                    <h4 className="text-xs font-mono text-teal-300 tracking-[0.15em] uppercase mb-2">
-                      Technologies Used
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {project.technologies.map((tech) => (
-                        <span
-                          key={tech}
-                          className="px-3 py-1 text-xs font-mono text-gray-300 bg-white/5 rounded-full border border-white/10"
-                        >
-                          {tech}
-                        </span>
-                      ))}
+                  {project.technologies.length > 0 && (
+                    <div className="mb-4">
+                      <h4 className="text-xs font-mono text-teal-300 tracking-[0.15em] uppercase mb-2">
+                        Technologies Used
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {project.technologies.map((tech) => (
+                          <span
+                            key={tech}
+                            className="px-3 py-1 text-xs font-mono text-gray-300 bg-white/5 rounded-full border border-white/10"
+                          >
+                            {tech}
+                          </span>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                   
                   {/* Results */}
-                  <div>
-                    <h4 className="text-xs font-mono text-teal-300 tracking-[0.15em] uppercase mb-2">
-                      Key Results
-                    </h4>
-                    <ul className="space-y-1.5">
-                      {project.results.map((result) => (
-                        <li key={result} className="text-sm text-gray-400 flex items-start gap-2 group-hover:text-gray-300 transition-colors duration-300">
-                          <CheckCircle className="w-4 h-4 text-teal-300/70 shrink-0 mt-0.5" strokeWidth={1.5} />
-                          {result}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  {project.results.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-mono text-teal-300 tracking-[0.15em] uppercase mb-2">
+                        Key Results
+                      </h4>
+                      <ul className="space-y-1.5">
+                        {project.results.map((result) => (
+                          <li key={result} className="text-sm text-gray-400 flex items-start gap-2 group-hover:text-gray-300 transition-colors duration-300">
+                            <CheckCircle className="w-4 h-4 text-teal-300/70 shrink-0 mt-0.5" strokeWidth={1.5} />
+                            {result}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               );
             })}
           </div>
         </div>
       </section>
+
+      {/* Scroll to Top Button */}
+      <ScrollToTop />
     </div>
   );
 }

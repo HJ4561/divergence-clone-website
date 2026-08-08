@@ -1,6 +1,33 @@
+// src/components/home/CaseStudy.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface CaseStudyCard {
+  id: number;
+  title: string;
+  description: string;
+  image: string | null;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+interface CaseStudyData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  cards: CaseStudyCard[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// SVG COMPONENTS
+// ============================================================
 function SequenceDiagram() {
   const lanes = [
     { x: 30, label: 'SPEC' },
@@ -97,7 +124,6 @@ function FileTree() {
   );
 }
 
-// deterministic "mostly active" pattern — no Math.random so it's stable across renders/SSR
 const FLEET_ACTIVE = [1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 1, 1];
 
 function FleetGrid() {
@@ -122,38 +148,77 @@ function FleetGrid() {
   );
 }
 
-const stages = [
-  {
-    title: 'The workflow became a skill — data, not code',
-    description:
-      "Their engineers' process, written once as a reviewable document the agent follows: load the right catalog model, set targets from the customer spec, optimize only within manufacturer-approved bounds, verify the winner, and generate the datasheet.",
-    caption: 'SEQUENCE DIAGRAM',
-    Visual: SequenceDiagram,
-  },
-  {
-    title: 'One unattended run, end to end',
-    description:
-      'Baseline solve, KPI check against spec, Bayesian optimization over approved parameters, re-solve of the winning candidate, and a customer-facing datasheet — patterns, gain, matching, efficiency — with zero hand-editing.',
-    caption: 'OPTIMIZATION LOOP',
-    Visual: OptimizationLoop,
-  },
-  {
-    title: 'Every run leaves a paper trail',
-    description:
-      'Every solve, variable change, and decision is logged. Each run keeps its request, decision log, and working solver project on disk — replayable and reviewable. Optimization their engineers can defend.',
-    caption: 'WORKSPACE FILE TREE',
-    Visual: FileTree,
-  },
-  {
-    title: 'Where it goes: every customer request, automated',
-    description:
-      'The pilot automates one workflow. The end state is a fleet: every incoming customer configuration handled the same way — engineers set the targets and sign-off gates while agents fan out across products, specs, and what-if studies, keeping every solver seat busy.',
-    caption: 'FLEET OF AGENTS',
-    Visual: FleetGrid,
-  },
-];
+// ============================================================
+// MAIN CASE STUDY COMPONENT
+// ============================================================
+interface CaseStudyProps {
+  data?: CaseStudyData | null;
+  loading?: boolean;
+}
 
-export default function CaseStudy() {
+export default function CaseStudy({ data, loading = false }: CaseStudyProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-900 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="h-4 w-32 bg-ink-800 rounded mb-4"></div>
+            <div className="h-10 w-2/3 bg-ink-800 rounded mb-4"></div>
+            <div className="h-4 w-full bg-ink-800 rounded mb-8"></div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {[1, 2, 3, 4].map((i) => (
+                <div key={i} className="h-64 bg-ink-800 rounded-xl"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-900 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Case study content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API cards to stages
+  const stages = data.cards && data.cards.length > 0
+    ? data.cards.map((card, index) => ({
+        title: card.title,
+        description: card.description,
+        caption: index === 0 ? 'SEQUENCE DIAGRAM' : 
+                 index === 1 ? 'OPTIMIZATION LOOP' : 
+                 index === 2 ? 'WORKSPACE FILE TREE' : 
+                 'FLEET OF AGENTS',
+        Visual: index === 0 ? SequenceDiagram : 
+                index === 1 ? OptimizationLoop : 
+                index === 2 ? FileTree : 
+                FleetGrid,
+      }))
+    : [];
+
+  // If no cards, show empty state
+  if (stages.length === 0) {
+    return (
+      <section className="py-16 md:py-24 bg-ink-900 border-t border-white/10">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">No case study cards available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section id="case-study" className="py-16 md:py-24 bg-ink-900 border-t border-white/10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -162,10 +227,10 @@ export default function CaseStudy() {
             &sect; 04 / CASE STUDY
           </span>
           <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-4 text-white">
-            Product ID In. Optimized Design and Datasheet Out.
+            {data.heading}
           </h2>
           <p className="text-sm md:text-base text-gray-400 leading-relaxed">
-            A manufacturer of configurable antenna-in-package modules needed every customer configuration verified, optimized, and documented in Ansys HFSS — an engineer-day of expert work per part. We encoded their process as an agent-run workflow.
+            {data.description}
           </p>
         </div>
 

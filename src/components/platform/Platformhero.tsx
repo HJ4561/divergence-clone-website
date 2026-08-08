@@ -1,6 +1,28 @@
+// src/components/platform/PlatformHero.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface PlatformSectionData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  operating_benefits: any[];
+  work_with_us: any[];
+  coming_soon: any[];
+  demonstrations: any[];
+  built_for_production: any[];
+  pricing_plans: any[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// PIPELINE STEPS
+// ============================================================
 const pipeline = [
   { label: 'CAD', description: 'Your model, pulled straight from the CAD file you already have.', icon: 'cad' },
   { label: 'SIMULATE', description: 'The agent runs the solver — setup, sweep, and optimization, unattended.', icon: 'sim' },
@@ -102,7 +124,54 @@ function LivePipelinePanel() {
   );
 }
 
-export default function Hero() {
+// ============================================================
+// MAIN PLATFORM HERO COMPONENT
+// ============================================================
+interface PlatformHeroProps {
+  data?: PlatformSectionData | null;
+  loading?: boolean;
+}
+
+export default function PlatformHero({ data, loading = false }: PlatformHeroProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="relative overflow-hidden bg-ink-950 bg-grid pt-20 pb-16 md:pt-24 md:pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-[1.15fr_0.85fr] gap-10 lg:gap-12 items-stretch">
+            <div className="animate-pulse">
+              <div className="h-4 w-32 bg-ink-800 rounded mb-6"></div>
+              <div className="h-12 w-3/4 bg-ink-800 rounded mb-4"></div>
+              <div className="h-4 w-full bg-ink-800 rounded mb-2"></div>
+              <div className="h-4 w-5/6 bg-ink-800 rounded mb-2"></div>
+              <div className="h-4 w-2/3 bg-ink-800 rounded mb-6"></div>
+              <div className="flex gap-4">
+                <div className="h-10 w-48 bg-ink-800 rounded"></div>
+                <div className="h-10 w-48 bg-ink-800 rounded"></div>
+              </div>
+            </div>
+            <div className="animate-pulse">
+              <div className="h-64 bg-ink-800 rounded-xl"></div>
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="relative overflow-hidden bg-ink-950 bg-grid pt-20 pb-16 md:pt-24 md:pb-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Hero content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative overflow-hidden bg-ink-950 bg-grid pt-20 pb-16 md:pt-24 md:pb-20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -119,14 +188,14 @@ export default function Hero() {
               className="font-serif text-3xl sm:text-4xl md:text-5xl font-semibold tracking-tight leading-tight text-white opacity-0 animate-fade-up"
               style={{ animationDelay: '0.15s' }}
             >
-              AI Transformation for Simulation Engineering
+              {data.heading}
             </h1>
 
             <p
               className="mt-5 text-base sm:text-lg text-gray-300 max-w-xl leading-relaxed opacity-0 animate-fade-up"
               style={{ animationDelay: '0.25s' }}
             >
-              We design, build, and maintain AI agents that run your real workflows — CAD to simulation to customer-ready datasheet — inside the solver stack your team already uses.
+              {data.description}
             </p>
 
             <p

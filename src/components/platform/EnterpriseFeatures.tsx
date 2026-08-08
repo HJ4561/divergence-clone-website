@@ -1,30 +1,40 @@
+// src/components/platform/EnterpriseFeatures.tsx
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-const infraFeatures = [
-  {
-    title: "IP Protection & Data Security",
-    description: "Runs inside your secure environment, with support for enterprise encryption and isolated compute.",
-    icon: "shield",
-  },
-  {
-    title: "Solver-Native Integration",
-    description: "Uses official vendor APIs and licensing — Ansys HFSS today, Dassault CST next — to ensure compatibility without hacks or reverse engineering.",
-    icon: "plug",
-  },
-  {
-    title: "Maintained Against Every Release",
-    description: "We track solver version drift and the PyAEDT integration quirks so your automation keeps working release after release — the maintenance burden that sinks internal builds, carried by us.",
-    icon: "sync",
-  },
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface BuiltForProduction {
+  id: number;
+  heading: string;
+  description: string;
+  icon: string;
+  image: string | null;
+  order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
 
-const teamFeature = {
-  title: "Built by RF Engineers, for RF Engineers",
-  description: "Founded by PhDs in electromagnetics and applied mathematics, with industry experience at companies including Apple — and developed in collaboration with RF engineers across aerospace, telecom, and advanced hardware.",
-  link: { label: "Meet the team", to: "/about" },
-};
+interface PlatformSectionData {
+  id: number;
+  heading: string;
+  description: string;
+  is_active: boolean;
+  operating_benefits: any[];
+  work_with_us: any[];
+  coming_soon: any[];
+  demonstrations: any[];
+  built_for_production: BuiltForProduction[];
+  pricing_plans: any[];
+  created_at: string;
+  updated_at: string;
+}
 
+// ============================================================
+// FEATURE ICON
+// ============================================================
 function FeatureIcon({ type }: { type: string }) {
   return (
     <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" aria-hidden="true">
@@ -46,11 +56,87 @@ function FeatureIcon({ type }: { type: string }) {
           <path d="M5,20 L5,16.5 L8.5,16.5" fill="none" stroke="#5eead4" strokeWidth="1.3" strokeLinecap="round" strokeLinejoin="round" />
         </>
       )}
+      {type === 'users' && (
+        <>
+          <circle cx="12" cy="8" r="3.2" fill="none" stroke="#5eead4" strokeWidth="1.3" />
+          <path d="M5,20 C5,15.5 8,13 12,13 C16,13 19,15.5 19,20" fill="none" stroke="#5eead4" strokeWidth="1.3" strokeLinecap="round" />
+        </>
+      )}
     </svg>
   );
 }
 
-export default function EnterpriseFeatures() {
+// ============================================================
+// MAIN ENTERPRISE FEATURES COMPONENT
+// ============================================================
+interface EnterpriseFeaturesProps {
+  data?: PlatformSectionData | null;
+  loading?: boolean;
+}
+
+export default function EnterpriseFeatures({ data, loading = false }: EnterpriseFeaturesProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="h-4 w-32 bg-ink-800 rounded mb-6"></div>
+            <div className="h-10 w-2/3 bg-ink-800 rounded mb-10"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-48 bg-ink-800 rounded-xl"></div>
+              ))}
+            </div>
+            <div className="h-24 bg-ink-800 rounded-xl mt-6"></div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Enterprise Features content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API built_for_production items to the format expected by the UI
+  const features = data.built_for_production && data.built_for_production.length > 0
+    ? data.built_for_production.map((item) => ({
+        title: item.heading,
+        description: item.description,
+        icon: item.icon?.toLowerCase() || 'shield',
+      }))
+    : [];
+
+  // Team feature - use from API or show empty state
+  const teamFeature = {
+    title: "Built by RF Engineers, for RF Engineers",
+    description: data.description || "",
+    link: { label: "Meet the team", to: "/about" },
+  };
+
+  // If no features, show empty state
+  if (features.length === 0) {
+    return (
+      <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">No enterprise features available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">
       {/* faint circuit-board texture — quiet, "enterprise infrastructure" without being literal */}
@@ -69,11 +155,11 @@ export default function EnterpriseFeatures() {
         </span>
 
         <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-semibold mb-10 md:mb-12 text-white">
-          Built for Enterprise Simulation Workflows
+          {data.heading}
         </h2>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-px bg-white/10 rounded-xl overflow-hidden mb-px">
-          {infraFeatures.map((f) => (
+          {features.map((f) => (
             <div
               key={f.title}
               className="group bg-ink-950 p-6 md:p-8 transition-colors duration-300 hover:bg-white/[0.02] flex flex-col"
@@ -88,24 +174,23 @@ export default function EnterpriseFeatures() {
         </div>
 
         {/* team credibility — a different kind of claim, so it's set apart rather than folded into the grid above */}
-        <div className="bg-teal-400/[0.04] border border-teal-400/20 rounded-xl p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
-          <div className="w-10 h-10 rounded-full border border-teal-400/40 flex items-center justify-center shrink-0">
-            <svg viewBox="0 0 24 24" className="w-[18px] h-[18px]" aria-hidden="true">
-              <circle cx="12" cy="8" r="3.2" fill="none" stroke="#5eead4" strokeWidth="1.3" />
-              <path d="M5,20 C5,15.5 8,13 12,13 C16,13 19,15.5 19,20" fill="none" stroke="#5eead4" strokeWidth="1.3" strokeLinecap="round" />
-            </svg>
+        {teamFeature.description && (
+          <div className="bg-teal-400/[0.04] border border-teal-400/20 rounded-xl p-6 md:p-8 flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
+            <div className="w-10 h-10 rounded-full border border-teal-400/40 flex items-center justify-center shrink-0">
+              <FeatureIcon type="users" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg md:text-xl font-semibold text-white mb-1.5">{teamFeature.title}</h3>
+              <p className="text-sm md:text-base text-gray-400 leading-relaxed">{teamFeature.description}</p>
+            </div>
+            <Link
+              to={teamFeature.link.to}
+              className="shrink-0 text-teal-300 hover:text-teal-200 transition-colors text-sm underline underline-offset-2 whitespace-nowrap"
+            >
+              {teamFeature.link.label} &rarr;
+            </Link>
           </div>
-          <div className="flex-1">
-            <h3 className="text-lg md:text-xl font-semibold text-white mb-1.5">{teamFeature.title}</h3>
-            <p className="text-sm md:text-base text-gray-400 leading-relaxed">{teamFeature.description}</p>
-          </div>
-          <Link
-            to={teamFeature.link.to}
-            className="shrink-0 text-teal-300 hover:text-teal-200 transition-colors text-sm underline underline-offset-2 whitespace-nowrap"
-          >
-            {teamFeature.link.label} &rarr;
-          </Link>
-        </div>
+        )}
       </div>
     </section>
   );

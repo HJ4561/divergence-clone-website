@@ -1,21 +1,97 @@
+// src/components/home/Testimonials.tsx
 import React from 'react';
 
-const testimonials = [
-  {
-    quote: "I spent 3 hours manually fixing an asymmetric mesh — then gave up for the day.",
-    author: "RF ENGINEER, MEDICAL-DEVICE STARTUP",
-  },
-  {
-    quote: "Waiting 10 hours and then nothing. That's an entire day lost.",
-    author: "ANTENNA ENGINEER, WIRELESS HARDWARE COMPANY",
-  },
-  {
-    quote: "A lot of the RF experts are baby boomers — we are going to lose a lot of these people.",
-    author: "ENGINEERING LEADER, AEROSPACE & DEFENSE",
-  },
-];
+// ============================================================
+// TYPES - Based on API response
+// ============================================================
+interface ProblemQuote {
+  id: number;
+  problem_statement: number;
+  quote_text: string;
+  author: string;
+  author_title: string;
+  order: number;
+  created_at: string;
+  updated_at: string;
+}
 
-export default function Testimonials() {
+interface ProblemStatementData {
+  id: number;
+  heading: string;
+  sub_heading: string;
+  is_active: boolean;
+  quotes: ProblemQuote[];
+  created_at: string;
+  updated_at: string;
+}
+
+// ============================================================
+// MAIN TESTIMONIALS COMPONENT
+// ============================================================
+interface TestimonialsProps {
+  data?: ProblemStatementData | null;
+  loading?: boolean;
+}
+
+export default function Testimonials({ data, loading = false }: TestimonialsProps) {
+  // If loading, show skeleton
+  if (loading) {
+    return (
+      <section className="relative py-16 md:py-20 bg-ink-900 border-t border-white/10 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="animate-pulse">
+            <div className="mb-6 md:mb-8">
+              <div className="h-4 w-32 bg-ink-800 rounded"></div>
+            </div>
+            <div className="h-10 w-2/3 bg-ink-800 rounded mb-4"></div>
+            <div className="h-4 w-1/2 bg-ink-800 rounded mb-10"></div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-48 bg-ink-800 rounded-xl"></div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // If no data provided, show error state
+  if (!data) {
+    return (
+      <section className="relative py-16 md:py-20 bg-ink-900 border-t border-white/10 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">Testimonials content not available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  // Map API quotes to testimonials format
+  const testimonials = data.quotes && data.quotes.length > 0
+    ? data.quotes.map((quote) => ({
+        quote: quote.quote_text,
+        author: quote.author_title 
+          ? `${quote.author}, ${quote.author_title}`
+          : quote.author || 'Anonymous',
+      }))
+    : [];
+
+  // If no testimonials, show empty state
+  if (testimonials.length === 0) {
+    return (
+      <section className="relative py-16 md:py-20 bg-ink-900 border-t border-white/10 overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center py-12">
+            <p className="text-gray-400">No testimonials available</p>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative py-16 md:py-20 bg-ink-900 border-t border-white/10 overflow-hidden">
       {/* Animated background elements */}
@@ -40,11 +116,11 @@ export default function Testimonials() {
         </div>
 
         <h2 className="text-2xl sm:text-3xl md:text-4xl font-semibold mb-3 md:mb-4 text-white">
-          The Problem, in Engineers' Own Words
+          {data.heading}
         </h2>
 
         <p className="text-sm md:text-base text-gray-400 max-w-2xl mb-10 md:mb-12 leading-relaxed">
-          From 80+ interviews with RF and simulation engineers across aerospace, telecom, semiconductors, and medical devices.
+          {data.sub_heading}
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">

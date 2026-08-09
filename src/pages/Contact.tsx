@@ -1,5 +1,5 @@
 // src/pages/Contact.tsx
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import EnquiryForm from '../components/ui/EnquiryForm';
 import { Link } from 'react-router-dom';
 

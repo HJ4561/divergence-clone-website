@@ -7,11 +7,9 @@
   ],
   "functions": {
     "api/*.js": {
-      "runtime": "nodejs@18.x"
+      "runtime": "@vercel/node@2"
     }
   },
   "buildCommand": "npm run build",
-  "outputDirectory": "build",
-  "devCommand": "npm start",
-  "installCommand": "npm install"
+  "outputDirectory": "build"
 }

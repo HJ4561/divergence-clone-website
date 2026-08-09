@@ -1,6 +1,6 @@
 // src/components/ui/WhatsAppButton.tsx
 import React, { useState, useEffect } from 'react';
-import { MessageCircle, X } from 'lucide-react';
+import { MessageCircle } from 'lucide-react';
 
 export default function WhatsAppButton() {
   // Your WhatsApp number: 0315-5254328

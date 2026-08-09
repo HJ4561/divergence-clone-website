@@ -21,6 +21,62 @@ interface PlatformSectionData {
 }
 
 // ============================================================
+// PRIMARY CTA BUTTON — Matches Header.tsx button pattern
+// ============================================================
+function PrimaryCtaButton({
+  to,
+  label,
+  onClick,
+  className = '',
+}: {
+  to: string;
+  label: string;
+  onClick?: () => void;
+  className?: string;
+}) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 py-2.5 rounded-lg transition-all duration-200 text-sm text-center border border-white/10 hover:border-teal-400/40 ${className}`}
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
+// GRADIENT CTA BUTTON — Subtle theme-consistent gradient
+// ============================================================
+function GradientCtaButton({
+  to,
+  label,
+  onClick,
+  className = '',
+}: {
+  to: string;
+  label: string;
+  onClick?: () => void;
+  className?: string;
+}) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`group relative inline-block bg-gradient-to-r from-teal-600/80 to-teal-400/80 hover:from-teal-500/90 hover:to-teal-300/90 text-white font-medium px-6 py-2.5 rounded-lg transition-all duration-200 text-sm text-center border border-teal-400/30 hover:border-teal-400/60 ${className}`}
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-20 blur-sm -z-10 group-hover:opacity-40 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
 // MAIN PLATFORM FINAL CTA COMPONENT
 // ============================================================
 interface PlatformFinalCTAProps {
@@ -79,12 +135,7 @@ export default function PlatformFinalCTA({ data, loading = false }: PlatformFina
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
               Get a personalized demo and discuss your specific simulation needs.
             </p>
-            <Link
-              to="/contact"
-              className="inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-6 py-2.5 rounded-lg transition-colors duration-200 text-sm"
-            >
-              Schedule Demo &rarr;
-            </Link>
+            <PrimaryCtaButton to="/contact" label="Schedule Demo" />
           </div>
 
           <div className="bg-ink-950 p-6 md:p-8">
@@ -92,12 +143,7 @@ export default function PlatformFinalCTA({ data, loading = false }: PlatformFina
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
               Experience the power of AI simulation with unlimited access for 14 days.
             </p>
-            <Link
-              to="/app/signup"
-              className="inline-block bg-gradient-to-r from-teal-400 to-blue-500 hover:from-teal-300 hover:to-blue-400 text-white font-medium px-6 py-2.5 rounded-lg transition-all duration-200 shadow-lg shadow-teal-500/25 hover:shadow-teal-500/40 text-sm"
-            >
-              Start Free Trial &rarr;
-            </Link>
+            <GradientCtaButton to="/app/signup" label="Start Free Trial" />
           </div>
         </div>
 

@@ -40,6 +40,74 @@ function getReadTime(content: string): string {
 }
 
 // ============================================================
+// DIAGRAM COVER — abstract fallback used when a post has no
+// image, so the list never falls back to a broken-image icon
+// or generic stock photography.
+// ============================================================
+function DiagramCover({ variant }: { variant: number }) {
+  return (
+    <svg viewBox="0 0 200 200" className="w-full h-full" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+      <rect width="200" height="200" fill="#0a0f14" />
+      {variant % 3 === 0 && (
+        <>
+          <circle cx="100" cy="100" r="55" fill="none" stroke="white" strokeOpacity="0.08" strokeWidth="1" />
+          <path d="M 100 45 A 55 55 0 1 1 99.9 45" fill="none" stroke="#5eead4" strokeOpacity="0.55" strokeWidth="1.3" />
+          {[[100, 45], [155, 100], [100, 155], [45, 100]].map(([x, y], i) => (
+            <circle key={i} cx={x} cy={y} r="3.5" fill="#0a0f14" stroke="#5eead4" strokeWidth="1.1" />
+          ))}
+        </>
+      )}
+      {variant % 3 === 1 && (
+        <path d="M15,130 L55,110 L90,55 L120,105 L155,140 L185,120" fill="none" stroke="#5eead4" strokeOpacity="0.55" strokeWidth="1.3" />
+      )}
+      {variant % 3 === 2 && (
+        <g transform="translate(100,100)">
+          <path d="M-45,-15 L0,-40 L45,-15 L45,25 L0,50 L-45,25 Z" fill="none" stroke="#5eead4" strokeOpacity="0.5" strokeWidth="1.2" />
+          <path d="M-45,-15 L0,10 L45,-15 M0,10 L0,50" fill="none" stroke="#5eead4" strokeOpacity="0.5" strokeWidth="0.9" />
+        </g>
+      )}
+    </svg>
+  );
+}
+
+function PostThumbnail({ image, variant, title }: { image: string | null; variant: number; title: string }) {
+  const [errored, setErrored] = useState(false);
+
+  if (image && !errored) {
+    return (
+      <img
+        src={image}
+        alt={title}
+        onError={() => setErrored(true)}
+        className="w-full h-full object-cover"
+      />
+    );
+  }
+
+  return <DiagramCover variant={variant} />;
+}
+
+// ============================================================
+// AMBIENT BACKGROUND — faint drifting waveform behind the hero,
+// same technique used on the Field Notes / Workflow sections,
+// kept low-opacity and motion-safe so it never competes with text.
+// ============================================================
+function BlogWaveformField() {
+  const wavePath = "M0,60 Q50,20 100,60 T200,60 T300,60 T400,60";
+  return (
+    <div className="absolute inset-x-0 top-1/2 -translate-y-1/2 h-[120px] overflow-hidden opacity-[0.06]" aria-hidden="true">
+      <div className="flex w-[1600px] motion-safe:animate-[blogWaveDrift_26s_linear_infinite]">
+        {[0, 1, 2, 3].map((i) => (
+          <svg key={i} viewBox="0 0 400 120" className="w-[400px] h-[120px] shrink-0" preserveAspectRatio="none">
+            <path d={wavePath} fill="none" stroke="#5eead4" strokeWidth="1" />
+          </svg>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+// ============================================================
 // SCROLL TO TOP COMPONENT
 // ============================================================
 function ScrollToTop() {
@@ -73,17 +141,17 @@ function ScrollToTop() {
           className="fixed bottom-24 right-6 z-50 p-3 bg-teal-400/10 hover:bg-teal-400/20 text-teal-300 rounded-full border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300 hover:scale-110 shadow-lg shadow-teal-500/10"
           aria-label="Scroll to top"
         >
-          <svg 
-            className="w-5 h-5" 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M5 10l7-7m0 0l7 7m-7-7v18" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
             />
           </svg>
         </button>
@@ -116,13 +184,13 @@ export default function Blog() {
       try {
         setLoading(true);
         const response = await fetch('https://client-divergent.vercel.app/api/blog/posts/');
-        
+
         if (!response.ok) {
           throw new Error(`Failed to fetch blog posts: ${response.status}`);
         }
-        
+
         const data = await response.json();
-        
+
         // Handle paginated response
         const postsData = data.results || data || [];
         setPosts(postsData);
@@ -161,7 +229,7 @@ export default function Blog() {
             onClick={() => window.location.reload()}
             className="text-teal-300 hover:text-teal-200 transition-colors"
           >
-            Try again →
+            Try again &rarr;
           </button>
         </div>
       </div>
@@ -171,90 +239,43 @@ export default function Blog() {
   // If no posts from API, show empty state
   if (posts.length === 0) {
     return (
-      <div className="min-h-screen bg-ink-950 py-20">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative overflow-hidden min-h-screen bg-ink-950 bg-grid py-20">
+        <BlogWaveformField />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-6 md:mb-8">
             <span className="text-xs md:text-sm text-teal-300 font-mono tracking-[0.15em]">
               &sect; JOURNAL
             </span>
           </div>
           <h1 className="font-serif text-4xl md:text-5xl font-semibold text-white mb-4">
-            Our <span className="text-teal-300">Blog</span>
+            Field Notes from the <span className="italic text-teal-300">RF & Simulation Frontier</span>
           </h1>
           <p className="text-gray-400 mb-12 max-w-xl leading-relaxed">
             Insights on AI automation, simulation engineering, and the future of RF design.
           </p>
-          <div className="text-center py-12">
-            <p className="text-gray-400">No blog posts available yet. Check back soon!</p>
+          <div className="text-center py-12 border-t border-white/10">
+            <p className="text-gray-400 mt-8">No blog posts available yet. Check back soon!</p>
           </div>
         </div>
       </div>
     );
   }
 
-  // Map API posts to display format
+  // Map API posts to display format using ONLY dynamic data from API
   const displayPosts = posts.map((post) => ({
     slug: post.slug,
     title: post.title,
-    excerpt: post.description || post.content?.substring(0, 150) + '...' || 'Read more',
+    excerpt: post.description || post.content?.substring(0, 150) + '...' || '',
     date: formatDate(post.published_date),
-    author: post.author || 'Divergent Physics',
+    author: post.author || '',
     readTime: post.read_time || getReadTime(post.content || ''),
+    image: post.image,
   }));
 
   return (
-    <div className="min-h-screen bg-ink-950 py-20">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="mb-6 md:mb-8">
-          <span className="text-xs md:text-sm text-teal-300 font-mono tracking-[0.15em]">
-            &sect; JOURNAL
-          </span>
-        </div>
-
-        <h1 className="font-serif text-4xl md:text-5xl font-semibold text-white mb-4">
-          Our <span className="text-teal-300">Blog</span>
-        </h1>
-        
-        <p className="text-gray-400 mb-12 max-w-xl leading-relaxed">
-          Insights on AI automation, simulation engineering, and the future of RF design.
-        </p>
-        
-        <div className="space-y-6">
-          {displayPosts.map((post, index) => (
-            <Link 
-              key={post.slug} 
-              to={`/blog/${post.slug}`} 
-              className="group block bg-ink-900 p-6 md:p-8 rounded-xl border border-white/10 hover:border-teal-400/30 transition-all duration-300 hover:shadow-lg hover:shadow-teal-400/5 animate-card-enter"
-              style={{ animationDelay: `${index * 100}ms` }}
-            >
-              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-3">
-                <h2 className="text-xl md:text-2xl font-semibold text-white group-hover:text-teal-300 transition-colors duration-300">
-                  {post.title}
-                </h2>
-                <span className="text-sm text-gray-500 font-mono whitespace-nowrap">
-                  {post.readTime}
-                </span>
-              </div>
-              
-              <p className="text-gray-400 mb-4 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
-                {post.excerpt}
-              </p>
-              
-              <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
-                <span className="text-gray-500 font-mono tracking-wide">
-                  {post.author}
-                </span>
-                <span className="text-gray-700">•</span>
-                <span className="text-gray-500 font-mono">
-                  {post.date}
-                </span>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </div>
-
+    <div className="relative overflow-hidden min-h-screen bg-ink-950 bg-grid py-20">
       <style>{`
+        @keyframes blogWaveDrift { from { transform: translateX(0); } to { transform: translateX(-400px); } }
         @keyframes card-enter {
           0% { opacity: 0; transform: translateY(20px); }
           100% { opacity: 1; transform: translateY(0); }
@@ -263,6 +284,64 @@ export default function Blog() {
           animation: card-enter 0.6s ease-out both;
         }
       `}</style>
+
+      <BlogWaveformField />
+
+      <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="mb-6 md:mb-8">
+          <span className="text-xs md:text-sm text-teal-300 font-mono tracking-[0.15em]">
+            &sect; JOURNAL
+          </span>
+        </div>
+
+        <h1 className="font-serif text-4xl md:text-5xl font-semibold text-white mb-4">
+          Field Notes from the <span className="italic text-teal-300">RF & Simulation Frontier</span>
+        </h1>
+
+        <p className="text-gray-400 mb-12 max-w-xl leading-relaxed">
+          Insights on AI automation, simulation engineering, and the future of RF design.
+        </p>
+
+        <div className="divide-y divide-white/10 border-t border-white/10">
+          {displayPosts.map((post, index) => (
+            <Link
+              key={post.slug}
+              to={`/blog/${post.slug}`}
+              className="group grid grid-cols-1 md:grid-cols-[160px_1fr] gap-5 md:gap-8 py-8 animate-card-enter"
+              style={{ animationDelay: `${index * 100}ms` }}
+            >
+              <div className="aspect-video md:aspect-square rounded-lg overflow-hidden border border-white/10">
+                <PostThumbnail image={post.image} variant={index} title={post.title} />
+              </div>
+
+              <div className="flex flex-col justify-center">
+                <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-2 mb-3">
+                  <h2 className="text-xl md:text-2xl font-semibold text-white group-hover:text-teal-300 transition-colors duration-300">
+                    {post.title}
+                  </h2>
+                  <span className="text-sm text-gray-500 font-mono whitespace-nowrap">
+                    {post.readTime}
+                  </span>
+                </div>
+
+                <p className="text-gray-400 mb-4 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+                  {post.excerpt}
+                </p>
+
+                <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-sm">
+                  <span className="text-gray-500 font-mono tracking-wide">
+                    {post.author}
+                  </span>
+                  <span className="text-gray-700">&middot;</span>
+                  <span className="text-gray-500 font-mono">
+                    {post.date}
+                  </span>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
 
       <ScrollToTop />
     </div>

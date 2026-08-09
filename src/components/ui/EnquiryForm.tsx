@@ -46,7 +46,6 @@ export default function EnquiryForm({ onSubmit }: EnquiryFormProps) {
 
     try {
       if (onSubmit) {
-        // Use the parent's onSubmit handler (API endpoint)
         await onSubmit({
           company_name: data.company || data.user_name,
           email: data.user_email,
@@ -57,7 +56,6 @@ export default function EnquiryForm({ onSubmit }: EnquiryFormProps) {
         setStatusMessage('✅ Your message has been sent successfully! We\'ll get back to you within 24 hours.');
         reset();
       } else {
-        // No onSubmit handler provided - show error
         setSubmitStatus('error');
         setStatusMessage('❌ Form submission is not configured. Please contact us directly.');
       }
@@ -71,19 +69,19 @@ export default function EnquiryForm({ onSubmit }: EnquiryFormProps) {
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-4">
+    <form onSubmit={handleSubmit(onSubmitForm)} className="space-y-2.5">
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Name</label>
+        <label className="block text-xs font-medium text-gray-300 mb-0.5">Name</label>
         <input
           {...register('user_name', { required: 'Name is required' })}
-          className="w-full px-3 py-2 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 text-sm"
+          className="w-full px-3 py-1.5 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 text-sm"
           placeholder="Your name"
         />
-        {errors.user_name && <p className="text-red-400 text-xs mt-1">{errors.user_name.message}</p>}
+        {errors.user_name && <p className="text-red-400 text-xs mt-0.5">{errors.user_name.message}</p>}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Email</label>
+        <label className="block text-xs font-medium text-gray-300 mb-0.5">Email</label>
         <input
           {...register('user_email', {
             required: 'Email is required',
@@ -92,54 +90,57 @@ export default function EnquiryForm({ onSubmit }: EnquiryFormProps) {
               message: 'Invalid email address',
             },
           })}
-          className="w-full px-3 py-2 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 text-sm"
+          className="w-full px-3 py-1.5 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 text-sm"
           placeholder="your@email.com"
         />
-        {errors.user_email && <p className="text-red-400 text-xs mt-1">{errors.user_email.message}</p>}
+        {errors.user_email && <p className="text-red-400 text-xs mt-0.5">{errors.user_email.message}</p>}
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Company</label>
+        <label className="block text-xs font-medium text-gray-300 mb-0.5">Company</label>
         <input
           {...register('company')}
-          className="w-full px-3 py-2 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 text-sm"
+          className="w-full px-3 py-1.5 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 text-sm"
           placeholder="Your company name"
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Solver Used (Optional)</label>
+        <label className="block text-xs font-medium text-gray-300 mb-0.5">Solver Used (Optional)</label>
         <input
           {...register('solver_used')}
-          className="w-full px-3 py-2 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 text-sm"
+          className="w-full px-3 py-1.5 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 text-sm"
           placeholder="e.g., Ansys HFSS, CST, etc."
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-1">Message</label>
+        <label className="block text-xs font-medium text-gray-300 mb-0.5">Message</label>
         <textarea
           {...register('message', { required: 'Message is required' })}
-          rows={3}
-          className="w-full px-3 py-2 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 resize-none text-sm"
+          rows={2}
+          className="w-full px-3 py-1.5 bg-ink-950 border border-white/10 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400 transition-all duration-200 resize-none text-sm"
           placeholder="Tell us about the workflow your team repeats..."
         />
-        {errors.message && <p className="text-red-400 text-xs mt-1">{errors.message.message}</p>}
+        {errors.message && <p className="text-red-400 text-xs mt-0.5">{errors.message.message}</p>}
       </div>
 
       <button
         type="submit"
         disabled={isSubmitting}
-        className="w-full bg-cream hover:bg-cream-dark text-ink-950 font-medium px-4 py-2.5 rounded-lg transition-colors duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        className="group relative w-full bg-ink-800 hover:bg-ink-700 text-white font-medium px-4 py-2 rounded-lg transition-all duration-200 text-sm disabled:opacity-50 disabled:cursor-not-allowed border border-white/10 hover:border-teal-400/40"
       >
-        {isSubmitting ? 'Sending...' : 'Send Message'}
+        <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+        <span className="relative z-10">
+          {isSubmitting ? 'Sending...' : 'Send Message'}
+        </span>
       </button>
 
       {submitStatus === 'success' && (
-        <p className="text-teal-300 text-center text-sm">{statusMessage}</p>
+        <p className="text-teal-300 text-center text-xs">{statusMessage}</p>
       )}
       {submitStatus === 'error' && (
-        <p className="text-red-400 text-center text-sm">{statusMessage}</p>
+        <p className="text-red-400 text-center text-xs">{statusMessage}</p>
       )}
     </form>
   );

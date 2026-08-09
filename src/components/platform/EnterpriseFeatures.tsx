@@ -67,6 +67,34 @@ function FeatureIcon({ type }: { type: string }) {
 }
 
 // ============================================================
+// PRIMARY CTA BUTTON — Matches Header.tsx button pattern
+// ============================================================
+function PrimaryCtaButton({
+  to,
+  label,
+  onClick,
+  className = '',
+}: {
+  to: string;
+  label: string;
+  onClick?: () => void;
+  className?: string;
+}) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-5 py-2 rounded-lg transition-all duration-200 text-sm text-center border border-white/10 hover:border-teal-400/40 ${className}`}
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
 // MAIN ENTERPRISE FEATURES COMPONENT
 // ============================================================
 interface EnterpriseFeaturesProps {
@@ -183,12 +211,18 @@ export default function EnterpriseFeatures({ data, loading = false }: Enterprise
               <h3 className="text-lg md:text-xl font-semibold text-white mb-1.5">{teamFeature.title}</h3>
               <p className="text-sm md:text-base text-gray-400 leading-relaxed">{teamFeature.description}</p>
             </div>
-            <Link
-              to={teamFeature.link.to}
-              className="shrink-0 text-teal-300 hover:text-teal-200 transition-colors text-sm underline underline-offset-2 whitespace-nowrap"
-            >
-              {teamFeature.link.label} &rarr;
-            </Link>
+            <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 shrink-0">
+              <Link
+                to={teamFeature.link.to}
+                className="text-teal-300 hover:text-teal-200 transition-colors text-sm underline underline-offset-2 whitespace-nowrap"
+              >
+                {teamFeature.link.label} &rarr;
+              </Link>
+              <PrimaryCtaButton 
+                to="/contact" 
+                label="Book a Consultation" 
+              />
+            </div>
           </div>
         )}
       </div>

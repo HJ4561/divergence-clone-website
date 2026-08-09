@@ -49,6 +49,24 @@ function getIcon(iconName: string): React.ElementType {
 }
 
 // ============================================================
+// PRIMARY CTA BUTTON — greyish fill, teal border glow on hover
+// Same pattern as Hero.tsx / BringUsWorkflow.tsx / Header.tsx / ServicesOverview.tsx
+// ============================================================
+function PrimaryCtaButton({ to, label, className = '' }: { to: string; label: string; className?: string }) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      className={`group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base text-center border border-white/10 hover:border-teal-400/40 ${className}`}
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
 // ANIMATED BACKGROUND
 // ============================================================
 function AnimatedBackground() {
@@ -56,7 +74,7 @@ function AnimatedBackground() {
     <div className="fixed inset-0 pointer-events-none overflow-hidden">
       <div className="absolute top-1/4 -left-32 w-[500px] h-[500px] bg-teal-400/5 rounded-full blur-3xl animate-orb-float"></div>
       <div className="absolute bottom-1/4 -right-32 w-[500px] h-[500px] bg-teal-400/5 rounded-full blur-3xl animate-orb-float-delay"></div>
-      
+
       <div className="absolute inset-0 opacity-[0.03]">
         <svg className="w-full h-full" xmlns="http://www.w3.org/2000/svg">
           <defs>
@@ -67,7 +85,7 @@ function AnimatedBackground() {
           <rect width="100%" height="100%" fill="url(#service-grid)" />
         </svg>
       </div>
-      
+
       <div className="absolute top-1/5 left-1/4 w-1.5 h-1.5 bg-teal-400/20 rounded-full animate-particle-float"></div>
       <div className="absolute top-1/3 right-1/5 w-1.5 h-1.5 bg-teal-400/15 rounded-full animate-particle-float-delay"></div>
       <div className="absolute bottom-1/3 left-1/5 w-1.5 h-1.5 bg-teal-400/20 rounded-full animate-particle-float-delay-2"></div>
@@ -151,17 +169,17 @@ function ScrollToTop() {
           className="fixed bottom-24 right-6 z-50 p-3 bg-teal-400/10 hover:bg-teal-400/20 text-teal-300 rounded-full border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300 hover:scale-110 shadow-lg shadow-teal-500/10"
           aria-label="Scroll to top"
         >
-          <svg 
-            className="w-5 h-5" 
-            fill="none" 
-            stroke="currentColor" 
+          <svg
+            className="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
             viewBox="0 0 24 24"
           >
-            <path 
-              strokeLinecap="round" 
-              strokeLinejoin="round" 
-              strokeWidth={2} 
-              d="M5 10l7-7m0 0l7 7m-7-7v18" 
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M5 10l7-7m0 0l7 7m-7-7v18"
             />
           </svg>
         </button>
@@ -188,13 +206,13 @@ export default function ServicesPage() {
       try {
         setLoading(true);
         const response = await fetch('https://client-divergent.vercel.app/api/website-data/');
-        
+
         if (!response.ok) {
           throw new Error(`Failed to fetch data: ${response.status}`);
         }
-        
+
         const json = await response.json();
-        
+
         // Extract service_section from the response
         const serviceData = json.service_section || null;
         console.log('Services Data:', serviceData); // Debug log
@@ -243,7 +261,7 @@ export default function ServicesPage() {
             onClick={() => window.location.reload()}
             className="text-teal-300 hover:text-teal-200 transition-colors"
           >
-            Try again →
+            Try again &rarr;
           </button>
         </div>
       </div>
@@ -268,8 +286,8 @@ export default function ServicesPage() {
     icon: getIcon(service.icon),
     title: service.heading,
     description: service.description,
-    features: service.points_list && service.points_list.length > 0 
-      ? service.points_list 
+    features: service.points_list && service.points_list.length > 0
+      ? service.points_list
       : [],
     whatsappMessage: `Hi! I'm interested in the ${service.heading} template. Can you share the code template for this service?`
   }));
@@ -351,12 +369,7 @@ export default function ServicesPage() {
               {data.description}
             </p>
             <div className="mt-6">
-              <Link
-                to="/contact"
-                className="inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-colors duration-200 text-sm md:text-base"
-              >
-                Discuss Your Workflow &rarr;
-              </Link>
+              <PrimaryCtaButton to="/contact" label="Discuss Your Workflow" />
             </div>
           </div>
         </div>
@@ -419,7 +432,7 @@ export default function ServicesPage() {
                     >
                       Learn more <ArrowRight className="w-4 h-4" />
                     </Link>
-                    
+
                     {/* Get the Code Button */}
                     <button
                       onClick={() => handleWhatsAppClick(service.whatsappMessage)}
@@ -439,12 +452,7 @@ export default function ServicesPage() {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-12">
-            <Link
-              to="/contact"
-              className="inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-colors duration-200 text-sm md:text-base"
-            >
-              Discuss Your Workflow
-            </Link>
+            <PrimaryCtaButton to="/contact" label="Discuss Your Workflow" />
             <Link
               to="/wireless"
               className="text-teal-300 hover:text-teal-200 transition-colors inline-flex items-center gap-2 text-sm md:text-base"

@@ -93,6 +93,23 @@ function WorkflowTerminal({ logLines = defaultLogLines }) {
 }
 
 // ============================================================
+// PRIMARY CTA BUTTON — greyish fill, teal border glow on hover
+// ============================================================
+function PrimaryCtaButton({ to, label }: { to: string; label: string }) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      className="group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-5 py-2 rounded-lg transition-all duration-200 text-sm text-center border border-teal-400/40 hover:border-teal-400/70"
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
 // MAIN BRING US WORKFLOW COMPONENT
 // ============================================================
 interface BringUsWorkflowProps {
@@ -102,7 +119,7 @@ interface BringUsWorkflowProps {
 export default function BringUsWorkflow({ data }: BringUsWorkflowProps) {
   // Use API data if available, otherwise fallback to defaults
   const heading = data?.heading || 'Bring Us the Workflow Your Engineers Hate Repeating';
-  const description = data?.description || 
+  const description = data?.description ||
     "In one call we'll tell you whether it's automatable, what a pilot looks like, and what it would save you. No slideware — we show you a real workflow running.";
   const callToAction = data?.call_to_action || 'Book a Consultation';
 
@@ -127,12 +144,9 @@ export default function BringUsWorkflow({ data }: BringUsWorkflowProps) {
               <p className="text-gray-400 text-sm md:text-base mb-5 leading-relaxed">
                 30 minutes with the engineers who will actually build your automation.
               </p>
-              <Link
-                to="/contact"
-                className="inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-5 py-2 rounded-lg transition-colors duration-200 text-sm"
-              >
-                {callToAction} &rarr;
-              </Link>
+
+              <PrimaryCtaButton to="/contact" label={callToAction} />
+
               <p className="text-gray-400 text-sm mt-4 leading-relaxed">
                 Not ready for a call?{' '}
                 <Link to="/contact" className="text-teal-300 hover:text-teal-200 transition-colors underline underline-offset-2">

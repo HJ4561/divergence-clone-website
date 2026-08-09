@@ -154,9 +154,10 @@ export default function PricingPlans({ data, loading = false }: PricingPlansProp
 
             <Link
               to={proPlan.cta_link}
-              className="mt-auto inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-6 py-2.5 rounded-lg transition-colors duration-200 text-sm text-center"
+              className="mt-auto inline-block group relative bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 py-2.5 rounded-lg transition-all duration-200 text-sm text-center border border-white/10 hover:border-teal-400/40"
             >
-              {proPlan.cta_label}
+              <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+              <span className="relative z-10">{proPlan.cta_label} &rarr;</span>
             </Link>
           </div>
 
@@ -213,9 +214,10 @@ export default function PricingPlans({ data, loading = false }: PricingPlansProp
 
             <Link
               to={enterprisePlan.cta_link}
-              className="mt-auto inline-block bg-transparent hover:bg-white/5 text-white font-medium px-6 py-2.5 rounded-lg border border-white/15 transition-colors duration-200 text-sm text-center"
+              className="mt-auto inline-block group relative bg-transparent hover:bg-white/5 text-white font-medium px-6 py-2.5 rounded-lg border border-white/15 transition-colors duration-200 text-sm text-center"
             >
-              {enterprisePlan.cta_label}
+              <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-0 blur-sm -z-10 group-hover:opacity-20 transition-opacity duration-300" />
+              <span className="relative z-10">{enterprisePlan.cta_label} &rarr;</span>
             </Link>
           </div>
         </div>

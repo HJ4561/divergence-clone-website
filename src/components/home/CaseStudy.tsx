@@ -258,9 +258,10 @@ export default function CaseStudy({ data, loading = false }: CaseStudyProps) {
         <div className="mt-10 md:mt-12">
           <Link
             to="/contact"
-            className="inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-colors duration-200 text-sm md:text-base"
+            className="inline-block group relative bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base border border-white/10 hover:border-teal-400/40"
           >
-            Walk Through the Full Pilot &rarr;
+            <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+            <span className="relative z-10">Walk Through the Full Pilot &rarr;</span>
           </Link>
         </div>
       </div>

@@ -1,8 +1,7 @@
-// src/components/ui/WhatsAppButton.tsx
+import React from 'react';
 import { MessageCircle } from 'lucide-react';
 
 export default function WhatsAppButton() {
-  // Remove the unused isVisible state
   const phoneNumber = process.env.REACT_APP_WHATSAPP_NUMBER || '1234567890';
   const whatsappUrl = `https://wa.me/${phoneNumber.replace(/[^0-9]/g, '')}`;
 
@@ -11,7 +10,7 @@ export default function WhatsAppButton() {
       href={whatsappUrl}
       target="_blank"
       rel="noopener noreferrer"
-      className="group relative flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
+      className="group fixed bottom-6 right-6 z-50 flex items-center justify-center w-14 h-14 md:w-16 md:h-16 bg-green-500 hover:bg-green-600 text-white rounded-full shadow-lg hover:shadow-xl transition-all duration-200 hover:scale-110"
       aria-label="Contact on WhatsApp"
     >
       <MessageCircle size={24} className="md:w-7 md:h-7" />

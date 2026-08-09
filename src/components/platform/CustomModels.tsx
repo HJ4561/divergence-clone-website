@@ -34,6 +34,34 @@ interface PlatformSectionData {
 }
 
 // ============================================================
+// PRIMARY CTA BUTTON — Matches Header.tsx button pattern
+// ============================================================
+function PrimaryCtaButton({
+  to,
+  label,
+  onClick,
+  className = '',
+}: {
+  to: string;
+  label: string;
+  onClick?: () => void;
+  className?: string;
+}) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-8 py-3.5 rounded-lg transition-all duration-200 text-base text-center border border-white/10 hover:border-teal-400/40 ${className}`}
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
 // NEURAL FIELD BACKGROUND
 // ============================================================
 const nodes: [number, number][] = [
@@ -180,12 +208,9 @@ export default function CustomModels({ data, loading = false }: CustomModelsProp
           ))}
         </div>
 
-        <Link
-          to="/contact"
-          className="inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-colors duration-200 text-sm md:text-base"
-        >
-          Join Early Access &rarr;
-        </Link>
+        <div className="flex justify-center">
+          <PrimaryCtaButton to="/contact" label="Join Early Access" />
+        </div>
       </div>
     </section>
   );

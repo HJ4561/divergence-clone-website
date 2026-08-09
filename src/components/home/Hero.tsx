@@ -148,6 +148,25 @@ function LivePipelinePanel({ steps }: { steps: PipelineStep[] }) {
 }
 
 // ============================================================
+// PRIMARY CTA BUTTON — greyish fill, teal border glow on hover
+// (kept identical to the one in BringUsWorkflow.tsx — same
+// classNames, same arrow-stripping logic — so the two stay in sync)
+// ============================================================
+function PrimaryCtaButton({ to, label }: { to: string; label: string }) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      className="group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base text-center border border-white/10 hover:border-teal-400/40"
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
 // MAIN HERO COMPONENT
 // ============================================================
 interface HeroProps {
@@ -244,13 +263,8 @@ export default function Hero({ data, pipelineSteps = [], loading = false }: Hero
               className="mt-7 flex flex-col sm:flex-row gap-3 sm:gap-4 opacity-0 animate-fade-up"
               style={{ animationDelay: '0.5s' }}
             >
-              <Link
-                to="/contact"
-                className="relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base text-center border border-white/5 hover:border-white/10"
-              >
-                <span className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-teal-400 to-blue-500 opacity-40 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300"></span>
-                <span className="relative z-10">{data.call_to_action_1} &rarr;</span>
-              </Link>
+              <PrimaryCtaButton to="/contact" label={data.call_to_action_1} />
+
               <a
                 href="#case-study"
                 className="bg-transparent hover:bg-white/5 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg border border-white/15 transition-colors duration-200 text-sm md:text-base text-center"

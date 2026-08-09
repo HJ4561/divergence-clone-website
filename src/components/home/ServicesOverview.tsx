@@ -49,6 +49,24 @@ function getIcon(iconName: string): React.ElementType {
 }
 
 // ============================================================
+// PRIMARY CTA BUTTON — greyish fill, teal border glow on hover
+// Same pattern as Hero.tsx / BringUsWorkflow.tsx / Header.tsx
+// ============================================================
+function PrimaryCtaButton({ to, label }: { to: string; label: string }) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      className="group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base text-center border border-white/10 hover:border-teal-400/40"
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
 // MAIN SERVICES OVERVIEW COMPONENT
 // ============================================================
 interface ServicesOverviewProps {
@@ -98,8 +116,8 @@ export default function ServicesOverview({ data, loading = false }: ServicesOver
         icon: getIcon(service.icon),
         title: service.heading,
         description: service.description,
-        features: service.points_list && service.points_list.length > 0 
-          ? service.points_list 
+        features: service.points_list && service.points_list.length > 0
+          ? service.points_list
           : [],
       }))
     : [];
@@ -167,13 +185,8 @@ export default function ServicesOverview({ data, loading = false }: ServicesOver
         </div>
 
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4 sm:gap-6 mt-12">
-          <Link
-            to="/contact"
-            className="relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 md:px-8 py-2.5 md:py-3 rounded-lg transition-all duration-200 text-sm md:text-base text-center border border-white/5 hover:border-white/10"
-          >
-            <span className="absolute -inset-0.5 rounded-lg bg-gradient-to-r from-teal-400 to-blue-500 opacity-40 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300"></span>
-            <span className="relative z-10">Discuss Your Workflow</span>
-          </Link>
+          <PrimaryCtaButton to="/contact" label="Discuss Your Workflow" />
+
           <Link
             to="/wireless"
             className="text-teal-300 hover:text-teal-200 transition-colors inline-flex items-center gap-2 text-sm md:text-base"

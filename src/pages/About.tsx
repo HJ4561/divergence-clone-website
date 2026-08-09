@@ -112,6 +112,62 @@ function LinkedinIcon() {
 }
 
 // ============================================================
+// PRIMARY CTA BUTTON — Matches Header.tsx button pattern
+// ============================================================
+function PrimaryCtaButton({
+  to,
+  label,
+  onClick,
+  className = '',
+}: {
+  to: string;
+  label: string;
+  onClick?: () => void;
+  className?: string;
+}) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-6 py-2.5 rounded-lg transition-all duration-200 text-sm text-center border border-white/10 hover:border-teal-400/40 ${className}`}
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
+// OUTLINE CTA BUTTON — For secondary actions
+// ============================================================
+function OutlineCtaButton({
+  to,
+  label,
+  onClick,
+  className = '',
+}: {
+  to: string;
+  label: string;
+  onClick?: () => void;
+  className?: string;
+}) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`group relative inline-block bg-transparent hover:bg-white/5 text-white font-medium px-6 py-2.5 rounded-lg border border-white/15 transition-colors duration-200 text-sm text-center ${className}`}
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-0 blur-sm -z-10 group-hover:opacity-20 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
+// ============================================================
 // SCROLL TO TOP COMPONENT
 // ============================================================
 function ScrollToTop() {
@@ -547,12 +603,7 @@ function WorkWithUsSection() {
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
               Walk through the workflows with our team and discuss your systems.
             </p>
-            <Link
-              to="/contact"
-              className="inline-block bg-cream hover:bg-cream-dark text-ink-950 font-medium px-6 py-2.5 rounded-lg transition-colors duration-200 text-sm"
-            >
-              Schedule Demo &rarr;
-            </Link>
+            <PrimaryCtaButton to="/contact" label="Schedule Demo" />
           </div>
 
           <div className="bg-ink-950 p-6 md:p-8 rounded-xl border border-white/10 hover:border-teal-400/30 transition-all duration-300 hover:shadow-xl hover:shadow-teal-400/5">
@@ -563,12 +614,7 @@ function WorkWithUsSection() {
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
               Get hands-on with Divergent Physics's automation across HFSS and wireless systems.
             </p>
-            <Link
-              to="/contact"
-              className="inline-block bg-transparent hover:bg-white/5 text-white font-medium px-6 py-2.5 rounded-lg border border-white/15 transition-colors duration-200 text-sm"
-            >
-              Start Free Trial &rarr;
-            </Link>
+            <OutlineCtaButton to="/contact" label="Start Free Trial" />
           </div>
         </div>
       </div>

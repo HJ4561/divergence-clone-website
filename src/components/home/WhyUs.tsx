@@ -26,6 +26,19 @@ interface WhyUsData {
 }
 
 // ============================================================
+// VERIFICATION SCAN — a faint beam sweeping down through the
+// card grid, evoking a credential/audit check passing over the
+// content. One motion element only, motion-safe gated.
+// ============================================================
+function VerificationScan() {
+  return (
+    <div className="pointer-events-none absolute inset-0 overflow-hidden" aria-hidden="true">
+      <div className="absolute inset-x-0 h-32 bg-gradient-to-b from-transparent via-teal-400/[0.06] to-transparent motion-safe:animate-[verifyScan_7s_ease-in-out_infinite]" />
+    </div>
+  );
+}
+
+// ============================================================
 // MAIN WHY US COMPONENT
 // ============================================================
 interface WhyUsProps {
@@ -81,8 +94,8 @@ export default function WhyUs({ data, loading = false }: WhyUsProps) {
           .slice(0, 4)
           .map(word => word.replace(/[,.]/g, '')),
         // Add link to first card only
-        link: card.order === 1 
-          ? { label: "Meet the team →", to: "/about" } 
+        link: card.order === 1
+          ? { label: "Meet the team →", to: "/about" }
           : undefined,
       }))
     : [];
@@ -101,8 +114,20 @@ export default function WhyUs({ data, loading = false }: WhyUsProps) {
   }
 
   return (
-    <section className="py-16 md:py-24 bg-ink-900 border-t border-white/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden bg-ink-900 bg-grid border-t border-white/10 py-16 md:py-24">
+      <style>{`
+        @keyframes verifyScan {
+          0%   { transform: translateY(-140px); opacity: 0; }
+          10%  { opacity: 1; }
+          50%  { transform: translateY(340px); opacity: 1; }
+          60%  { opacity: 0; }
+          100% { transform: translateY(340px); opacity: 0; }
+        }
+      `}</style>
+
+      <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[520px] h-[520px] bg-teal-400/[0.05] rounded-full blur-3xl" />
+
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="mb-6 md:mb-8">
           <span className="text-xs md:text-sm text-teal-300 font-mono tracking-[0.15em]">
             &sect; 07 / WHY US
@@ -113,11 +138,13 @@ export default function WhyUs({ data, loading = false }: WhyUsProps) {
           {data.heading}
         </h2>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 rounded-xl overflow-hidden">
+        <div className="relative grid grid-cols-1 md:grid-cols-2 gap-px bg-white/10 rounded-xl overflow-hidden">
+          <VerificationScan />
+
           {reasons.map((reason) => (
             <div
               key={reason.number}
-              className="group bg-ink-950 p-6 md:p-8 transition-colors duration-300 hover:bg-white/[0.02] flex flex-col"
+              className="group relative bg-ink-950 p-6 md:p-8 transition-colors duration-300 hover:bg-white/[0.02] flex flex-col"
             >
               <span className="text-xs font-mono text-teal-300/90 tracking-widest mb-5">
                 {reason.number}

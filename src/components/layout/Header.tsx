@@ -14,6 +14,37 @@ const navigation = [
   { name: 'Blog', href: '/blog' },
 ];
 
+// ============================================================
+// PRIMARY CTA BUTTON — greyish fill, teal border glow on hover
+// Matches the Hero.tsx / BringUsWorkflow.tsx button pattern.
+// Hover-only teal (like Hero's), not always-on (like BringUsWorkflow's) —
+// see note above on why for a persistent nav element.
+// ============================================================
+function PrimaryCtaButton({
+  to,
+  label,
+  onClick,
+  className = '',
+}: {
+  to: string;
+  label: string;
+  onClick?: () => void;
+  className?: string;
+}) {
+  const cleanLabel = label.replace(/[\s→\u2192]+$/, '').trim();
+
+  return (
+    <Link
+      to={to}
+      onClick={onClick}
+      className={`group relative inline-block bg-ink-800 hover:bg-ink-700 text-white font-medium px-5 py-2 rounded-lg transition-all duration-200 text-sm text-center border border-white/10 hover:border-teal-400/40 ${className}`}
+    >
+      <span className="absolute -inset-0.5 rounded-lg bg-teal-400 opacity-30 blur-sm -z-10 group-hover:opacity-70 transition-opacity duration-300" />
+      <span className="relative z-10">{cleanLabel} &rarr;</span>
+    </Link>
+  );
+}
+
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
@@ -47,7 +78,7 @@ export default function Header() {
       }
     } else if (href.startsWith('/#')) {
       const sectionId = href.replace('/#', '');
-      
+
       if (location.pathname !== '/') {
         navigate(href);
       } else {
@@ -87,12 +118,7 @@ export default function Header() {
           </nav>
 
           <div className="hidden md:block">
-            <Link
-              to="/contact"
-              className="bg-cream hover:bg-cream-dark text-ink-950 font-medium px-5 py-2 rounded-lg transition-colors duration-200 text-sm"
-            >
-              Book a Consultation &rarr;
-            </Link>
+            <PrimaryCtaButton to="/contact" label="Book a Consultation" />
           </div>
 
           <button
@@ -116,13 +142,12 @@ export default function Header() {
                   {item.name}
                 </a>
               ))}
-              <Link
+              <PrimaryCtaButton
                 to="/contact"
-                className="bg-cream hover:bg-cream-dark text-ink-950 font-medium px-4 py-2 rounded-lg text-center transition-colors duration-200 text-sm"
+                label="Book a Consultation"
                 onClick={() => setIsOpen(false)}
-              >
-                Book a Consultation &rarr;
-              </Link>
+                className="w-full"
+              />
             </div>
           </nav>
         )}

@@ -37,19 +37,19 @@ const footerLinks = {
   const socialLinks = [
     {
       name: 'X',
-      href: 'https://twitter.com/divergentphysics',
+      href: 'https://twitter.com/aiwebsite',
     },
     {
       name: 'LinkedIn',
-      href: 'https://linkedin.com/company/divergentphysics',
+      href: 'https://linkedin.com/company/aiwebsite',
     },
     {
       name: 'GitHub',
-      href: 'https://github.com/divergentphysics',
+      href: 'https://github.com/aiwebsite',
     },
     {
       name: 'YouTube',
-      href: 'https://youtube.com/@divergentphysics',
+      href: 'https://youtube.com/@aiwebsite',
     },
   ];
 
@@ -137,7 +137,7 @@ const footerLinks = {
               </span>
 
               <span className="text-[11px] font-mono tracking-[0.2em] text-gray-500 uppercase border-l border-white/15 pl-2.5">
-                Divergent Physics
+                AI Website
               </span>
             </Link>
 
@@ -151,7 +151,7 @@ const footerLinks = {
 
               {/* Email */}
               <a
-                href="mailto:hello@divergentphysics.com"
+                href="mailto:hello@aiwebsite.com"
                 className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-teal-300 transition-colors duration-200 group"
               >
                 <Mail
@@ -160,7 +160,7 @@ const footerLinks = {
                 />
 
                 <span>
-                  hello@divergentphysics.com
+                  hello@aiwebsite.com
                 </span>
               </a>
 
@@ -235,9 +235,9 @@ const footerLinks = {
 
           {/* Copyright */}
           <p className="text-xs text-gray-500 text-center sm:text-left">
-            &copy; {currentYear} Divergent Physics, Inc.
+            &copy; {currentYear} AI Website, Inc.
             {' '}
-            (formerly Divergence AI). All rights reserved.
+            (formerly AI-Website). All rights reserved.
           </p>
 
           {/* Social Icons */}

@@ -62,7 +62,6 @@ function ScrollToTop() {
 export default function Contact() {
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [message, setMessage] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // ============================================================
   // SCROLL TO TOP ON PAGE LOAD
@@ -81,7 +80,6 @@ export default function Contact() {
     solver_used: string;
     workflow_description: string;
   }) => {
-    setIsSubmitting(true);
     setSubmitStatus('idle');
     setMessage('');
 
@@ -100,7 +98,6 @@ export default function Contact() {
         setSubmitStatus('success');
         setMessage('✅ Your message has been sent successfully! We\'ll get back to you within 24 hours.');
       } else {
-        // Handle validation errors
         const errorMessages = Object.values(data).flat().join(' ');
         setSubmitStatus('error');
         setMessage(`❌ ${errorMessages || 'Please check your form and try again.'}`);
@@ -109,8 +106,6 @@ export default function Contact() {
       console.error('Error submitting form:', error);
       setSubmitStatus('error');
       setMessage('❌ Failed to send. Please try again or contact us directly.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

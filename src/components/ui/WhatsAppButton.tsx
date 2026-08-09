@@ -1,5 +1,4 @@
 // src/components/ui/WhatsAppButton.tsx
-import React, { useState, useEffect } from 'react';
 import { MessageCircle } from 'lucide-react';
 
 export default function WhatsAppButton() {

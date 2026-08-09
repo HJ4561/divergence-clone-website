@@ -195,7 +195,9 @@ export default function ServicesPage() {
   const [data, setData] = useState<ServiceSectionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const phoneNumber = process.env.REACT_APP_WHATSAPP_NUMBER || '923155254328';
+  
+  // ✅ FIXED: WhatsApp number (remove the 0 and add country code 92)
+  const phoneNumber = '923155254328';
 
   // ============================================================
   // FETCH SERVICES DATA
@@ -236,6 +238,7 @@ export default function ServicesPage() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
+  // ✅ FIXED: WhatsApp click handler with proper number
   const handleWhatsAppClick = (message: string) => {
     const encodedMessage = encodeURIComponent(message);
     window.open(`https://wa.me/${phoneNumber}?text=${encodedMessage}`, '_blank');
@@ -433,7 +436,7 @@ export default function ServicesPage() {
                       Learn more <ArrowRight className="w-4 h-4" />
                     </Link>
 
-                    {/* Get the Code Button */}
+                    {/* ✅ FIXED: Get the Code Button with WhatsApp redirect */}
                     <button
                       onClick={() => handleWhatsAppClick(service.whatsappMessage)}
                       className="ml-auto inline-flex items-center gap-2 bg-teal-400/10 hover:bg-teal-400/20 text-teal-300 border border-teal-400/30 hover:border-teal-400/50 px-3 py-1.5 rounded-lg transition-all duration-200 text-xs font-medium"

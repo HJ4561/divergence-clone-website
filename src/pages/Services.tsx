@@ -195,7 +195,7 @@ export default function ServicesPage() {
   const [data, setData] = useState<ServiceSectionData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const phoneNumber = process.env.REACT_APP_WHATSAPP_NUMBER || '1234567890';
+  const phoneNumber = process.env.REACT_APP_WHATSAPP_NUMBER || '923155254328';
 
   // ============================================================
   // FETCH SERVICES DATA

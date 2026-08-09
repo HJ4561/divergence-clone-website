@@ -168,7 +168,7 @@ export default function CustomModels({ data, loading = false }: CustomModelsProp
   // Use the heading from the API data
   // This is the correct heading for this section
   const heading = data.heading || "Turn Your Simulation Data Into Custom AI Models";
-  const description = data.description || "Your team runs thousands of simulations. Divergent Physics helps you train proprietary AI models on that data — so you can predict performance in seconds instead of hours.";
+  const description = data.description || "Your team runs thousands of simulations. Meshengg helps you train proprietary AI models on that data — so you can predict performance in seconds instead of hours.";
 
   return (
     <section className="relative overflow-hidden bg-ink-900 border-t border-white/10 py-16 md:py-24">

@@ -150,7 +150,7 @@ export default function WorkflowSteps({ data, loading = false }: WorkflowStepsPr
 
         <div className="max-w-2xl mx-auto bg-ink-950/90 backdrop-blur-sm border border-white/10 rounded-xl p-6 md:p-8 shadow-2xl shadow-black/50">
           <span className="block text-[11px] font-mono text-teal-300/90 tracking-widest mb-3">
-            AGENT-RUN / divergenceAI
+            AGENT-RUN / Meshengg
           </span>
           <h2 className="font-serif text-2xl sm:text-3xl md:text-4xl font-semibold text-white mb-8 leading-tight">
             The Agent-Run EM Simulation Workflow

@@ -15,7 +15,7 @@ export default function Footer() {
 const footerLinks = {
   Company: [
     { name: 'About', href: '/about' },
-    { name: 'Services', href: '/services' },  // Changed from /#what-we-do to /services
+    { name: 'Services', href: '/services' },
     { name: 'Projects', href: '/projects' },
     { name: 'Platform', href: '/platform' },
     { name: 'Blog', href: '/blog' },
@@ -37,19 +37,19 @@ const footerLinks = {
   const socialLinks = [
     {
       name: 'X',
-      href: 'https://twitter.com/aiwebsite',
+      href: 'https://twitter.com/meshengg',
     },
     {
       name: 'LinkedIn',
-      href: 'https://linkedin.com/company/aiwebsite',
+      href: 'https://linkedin.com/company/meshengg',
     },
     {
       name: 'GitHub',
-      href: 'https://github.com/aiwebsite',
+      href: 'https://github.com/meshengg',
     },
     {
       name: 'YouTube',
-      href: 'https://youtube.com/@aiwebsite',
+      href: 'https://youtube.com/@meshengg',
     },
   ];
 
@@ -137,7 +137,7 @@ const footerLinks = {
               </span>
 
               <span className="text-[11px] font-mono tracking-[0.2em] text-gray-500 uppercase border-l border-white/15 pl-2.5">
-                AI Website
+                Meshengg
               </span>
             </Link>
 
@@ -151,7 +151,7 @@ const footerLinks = {
 
               {/* Email */}
               <a
-                href="mailto:hello@aiwebsite.com"
+                href="mailto:Admin@meshengg.com"
                 className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-teal-300 transition-colors duration-200 group"
               >
                 <Mail
@@ -160,13 +160,13 @@ const footerLinks = {
                 />
 
                 <span>
-                  hello@aiwebsite.com
+                  Admin@meshengg.com
                 </span>
               </a>
 
               {/* Phone */}
               <a
-                href="tel:+1234567890"
+                href="tel:03155254328"
                 className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-teal-300 transition-colors duration-200 group"
               >
                 <Phone
@@ -175,7 +175,7 @@ const footerLinks = {
                 />
 
                 <span>
-                  +1 (234) 567-890
+                  0315-5254328
                 </span>
               </a>
 
@@ -235,7 +235,7 @@ const footerLinks = {
 
           {/* Copyright */}
           <p className="text-xs text-gray-500 text-center sm:text-left">
-            &copy; {currentYear} AI Website, Inc.
+            &copy; {currentYear} Meshengg, Inc.
             {' '}
             (formerly AI-Website). All rights reserved.
           </p>

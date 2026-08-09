@@ -1,53 +1,69 @@
 // src/pages/Contact.tsx
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import EnquiryForm from '../components/ui/EnquiryForm';
 import { Link } from 'react-router-dom';
+
+// ============================================================
+// SCROLL TO TOP COMPONENT
+// ============================================================
+function ScrollToTop() {
+  const [isVisible, setIsVisible] = React.useState(false);
+
+  useEffect(() => {
+    const toggleVisibility = () => {
+      if (window.scrollY > 300) {
+        setIsVisible(true);
+      } else {
+        setIsVisible(false);
+      }
+    };
+
+    window.addEventListener('scroll', toggleVisibility);
+    return () => window.removeEventListener('scroll', toggleVisibility);
+  }, []);
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
+
+  return (
+    <>
+      {isVisible && (
+        <button
+          onClick={scrollToTop}
+          className="fixed bottom-24 right-6 z-50 p-3 bg-teal-400/10 hover:bg-teal-400/20 text-teal-300 rounded-full border border-teal-400/30 hover:border-teal-400/50 transition-all duration-300 hover:scale-110 shadow-lg shadow-teal-500/10"
+          aria-label="Scroll to top"
+        >
+          <svg 
+            className="w-5 h-5" 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path 
+              strokeLinecap="round" 
+              strokeLinejoin="round" 
+              strokeWidth={2} 
+              d="M5 10l7-7m0 0l7 7m-7-7v18" 
+            />
+          </svg>
+        </button>
+      )}
+    </>
+  );
+}
 
 // ============================================================
 // CONTACT PAGE
 // ============================================================
 export default function Contact() {
-  const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [message, setMessage] = useState('');
-
-  // ============================================================
-  // HANDLE FORM SUBMISSION
-  // Endpoint: POST /api/leads/
-  // ============================================================
-  const handleFormSubmit = async (formData: {
-    company_name: string;
-    email: string;
-    solver_used: string;
-    workflow_description: string;
-  }) => {
-    setSubmitStatus('idle');
-    setMessage('');
-
-    try {
-      const response = await fetch('https://client-divergent.vercel.app/api/leads/', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        setSubmitStatus('success');
-        setMessage('✅ Your message has been sent successfully! We\'ll get back to you within 24 hours.');
-      } else {
-        const errorMessages = Object.values(data).flat().join(' ');
-        setSubmitStatus('error');
-        setMessage(`❌ ${errorMessages || 'Please check your form and try again.'}`);
-      }
-    } catch (error) {
-      console.error('Error submitting form:', error);
-      setSubmitStatus('error');
-      setMessage('❌ Failed to send. Please try again or contact us directly.');
-    }
-  };
+  // Scroll to top on page load
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, []);
 
   return (
     <div className="min-h-screen bg-ink-950 bg-grid flex items-center justify-center">
@@ -69,20 +85,8 @@ export default function Contact() {
           </div>
 
           <div className="mt-4">
-            <EnquiryForm onSubmit={handleFormSubmit} />
+            <EnquiryForm />
           </div>
-
-          {/* Status messages */}
-          {submitStatus === 'success' && (
-            <div className="mt-3 p-2.5 bg-teal-400/10 border border-teal-400/30 rounded-lg">
-              <p className="text-teal-300 text-xs sm:text-sm text-center">{message}</p>
-            </div>
-          )}
-          {submitStatus === 'error' && (
-            <div className="mt-3 p-2.5 bg-red-400/10 border border-red-400/30 rounded-lg">
-              <p className="text-red-400 text-xs sm:text-sm text-center">{message}</p>
-            </div>
-          )}
         </div>
 
         <div className="text-center mt-3">
@@ -94,6 +98,7 @@ export default function Contact() {
           </p>
         </div>
       </div>
+      <ScrollToTop />
     </div>
   );
 }

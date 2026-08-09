@@ -360,7 +360,7 @@ function TeamSection({ data, loading = false }: { data?: AboutSectionData | null
     ? data.team_members.map((member) => ({
         name: member.name,
         role: member.role || member.designation || 'Team Member',
-        bio: member.description || `${member.name} is a key member of the Divergent Physics team.`,
+        bio: member.description || `${member.name} is a key member of the Meshengg team.`,
         initials: getInitials(member.name),
         photo: member.image || null,
         education: 'View full profile for details',
@@ -396,7 +396,7 @@ function TeamSection({ data, loading = false }: { data?: AboutSectionData | null
           </h2>
 
           <p className="text-sm md:text-base text-gray-400 max-w-2xl leading-relaxed">
-            Divergent Physics is built by RF and information-theory researchers and engineers with deep antenna, MIMO, and electromagnetic simulation expertise.
+            Meshengg is built by RF and information-theory researchers and engineers with deep antenna, MIMO, and electromagnetic simulation expertise.
           </p>
         </div>
 
@@ -591,7 +591,7 @@ function WorkWithUsSection() {
         </h2>
 
         <p className="text-sm md:text-base text-gray-400 max-w-2xl mb-10 md:mb-12 leading-relaxed">
-          See how Divergent Physics automates your HFSS and wireless workflows on top of your existing Ansys setup.
+          See how Meshengg automates your HFSS and wireless workflows on top of your existing Ansys setup.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -612,7 +612,7 @@ function WorkWithUsSection() {
             </div>
             <h3 className="text-lg font-semibold text-white mb-2">Start Your Free Trial</h3>
             <p className="text-sm text-gray-400 leading-relaxed mb-5">
-              Get hands-on with Divergent Physics's automation across HFSS and wireless systems.
+              Get hands-on with Meshengg's automation across HFSS and wireless systems.
             </p>
             <OutlineCtaButton to="/contact" label="Start Free Trial" />
           </div>
@@ -638,9 +638,9 @@ function AboutFooter() {
     <footer className="bg-ink-950 border-t border-white/10 py-8 md:py-10">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
         <p className="text-xs text-gray-500 text-center sm:text-left">
-          &copy; 2026 Divergent Physics, Inc.
+          &copy; 2026 Meshengg, Inc.
           {' '}
-          (formerly Divergence AI). All rights reserved.
+          (formerly Meshengg). All rights reserved.
         </p>
 
         <nav className="flex flex-wrap justify-center gap-x-5 gap-y-2">

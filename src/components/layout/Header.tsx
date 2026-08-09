@@ -5,7 +5,7 @@ import { Menu, X } from 'lucide-react';
 
 const navigation = [
   { name: 'Home', href: '/' },
-  { name: 'Services', href: '/services' },  // Changed from /#what-we-do to /services
+  { name: 'Services', href: '/services' },  
   { name: 'Projects', href: '/projects' },
   { name: 'Case Study', href: '/#case-study' },
   { name: 'How We Work', href: '/#process' },
@@ -100,7 +100,7 @@ export default function Header() {
           <Link to="/" className="flex items-center gap-2.5">
             <span className="font-serif italic text-2xl text-violet-300">&#8711;&middot;AI</span>
             <span className="hidden sm:inline text-[11px] font-mono tracking-[0.2em] text-gray-500 uppercase border-l border-white/15 pl-2.5">
-              Website AI
+              Meshengg
             </span>
           </Link>
 

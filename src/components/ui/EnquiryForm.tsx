@@ -1,10 +1,8 @@
 // src/components/ui/EnquiryForm.tsx
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import emailjs from '@emailjs/browser';
 
-// ============================================================
-// TYPES
-// ============================================================
 type FormData = {
   user_name: string;
   user_email: string;
@@ -13,19 +11,7 @@ type FormData = {
   solver_used?: string;
 };
 
-interface EnquiryFormProps {
-  onSubmit?: (data: {
-    company_name: string;
-    email: string;
-    solver_used: string;
-    workflow_description: string;
-  }) => Promise<void>;
-}
-
-// ============================================================
-// ENQUIRY FORM COMPONENT
-// ============================================================
-export default function EnquiryForm({ onSubmit }: EnquiryFormProps) {
+export default function EnquiryForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [statusMessage, setStatusMessage] = useState('');
@@ -37,30 +23,39 @@ export default function EnquiryForm({ onSubmit }: EnquiryFormProps) {
     formState: { errors },
   } = useForm<FormData>();
 
-  // ============================================================
-  // HANDLE FORM SUBMISSION
-  // ============================================================
   const onSubmitForm = async (data: FormData) => {
     setIsSubmitting(true);
     setSubmitStatus('idle');
 
     try {
-      if (onSubmit) {
-        await onSubmit({
-          company_name: data.company || data.user_name,
-          email: data.user_email,
-          solver_used: data.solver_used || '',
-          workflow_description: data.message || '',
-        });
-        setSubmitStatus('success');
-        setStatusMessage('✅ Your message has been sent successfully! We\'ll get back to you within 24 hours.');
-        reset();
-      } else {
-        setSubmitStatus('error');
-        setStatusMessage('❌ Form submission is not configured. Please contact us directly.');
+      const serviceId = process.env.REACT_APP_EMAILJS_SERVICE_ID;
+      const templateId = process.env.REACT_APP_EMAILJS_TEMPLATE_ID;
+      const publicKey = process.env.REACT_APP_EMAILJS_PUBLIC_KEY;
+
+      if (!serviceId || !templateId || !publicKey) {
+        throw new Error('EmailJS configuration is missing. Please check your environment variables.');
       }
+
+      const result = await emailjs.send(
+        serviceId,
+        templateId,
+        {
+          user_name: data.user_name,
+          user_email: data.user_email,
+          company: data.company || 'Not provided',
+          solver_used: data.solver_used || 'Not specified',
+          message: data.message,
+        },
+        publicKey
+      );
+
+      console.log('Email sent successfully:', result);
+
+      setSubmitStatus('success');
+      setStatusMessage('✅ Your message has been sent successfully! We\'ll get back to you within 24 hours.');
+      reset();
     } catch (error) {
-      console.error(error);
+      console.error('Form submission error:', error);
       setSubmitStatus('error');
       setStatusMessage('❌ Failed to send. Please try again or contact us directly.');
     } finally {

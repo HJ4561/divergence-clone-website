@@ -1,6 +1,6 @@
+// src/index.tsx
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-// @ts-ignore: CSS import side effect declaration not found
 import './index.css';
 import App from './App';
 

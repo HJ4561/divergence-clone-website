@@ -1,22 +1,12 @@
 {
-  "builds": [
+  "rewrites": [
     {
-      "src": "myproject/wsgi.py",
-      "use": "@vercel/python"
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "myproject/wsgi.py"
-    },
-    {
-      "src": "/admin/(.*)",
-      "dest": "myproject/wsgi.py"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "myproject/wsgi.py"
-    }
-  ]
+  "buildCommand": "npm run build",
+  "outputDirectory": "build",
+  "devCommand": "npm start",
+  "installCommand": "npm install"
 }

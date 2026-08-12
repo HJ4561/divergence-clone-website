@@ -124,7 +124,7 @@ export default function ProblemsGrid({ data, loading = false }: ProblemsGridProp
       <section className="py-20 md:py-32 bg-ink-950 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16 border border-dashed border-white/10">
-            <p className="text-gray-400 font-mono text-sm">// problem statements not available</p>
+            <p className="text-gray-400 font-mono text-sm">&sol;&sol; problem statements not available</p>
           </div>
         </div>
       </section>
@@ -148,7 +148,7 @@ export default function ProblemsGrid({ data, loading = false }: ProblemsGridProp
       <section className="py-20 md:py-32 bg-ink-950 border-t border-white/10">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center py-16 border border-dashed border-white/10">
-            <p className="text-gray-400 font-mono text-sm">// no problem statements available</p>
+            <p className="text-gray-400 font-mono text-sm">&sol;&sol; no problem statements available</p>
           </div>
         </div>
       </section>

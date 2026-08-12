@@ -1,57 +1,110 @@
-import React from 'react';
+// src/components/layout/Footer.tsx
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Mail, Phone, MapPin, ArrowUpRight, X } from 'lucide-react';
 
-import {
-  Mail,
-  Phone,
-  MapPin,
-  ArrowUpRight,
-  X,
-} from 'lucide-react';
+// Define the shape of the API data we care about
+interface SiteSettings {
+  id: number;
+  site_name: string;
+  site_description: string;
+  logo: string;
+  logo_dark: string;
+  favicon: string;
+  email: string;
+  phone: string;
+  location: string;
+  footer_description: string;
+  copyright_text: string;
+  linkedin: string;
+  twitter: string;
+  facebook: string;
+  instagram: string;
+  github: string;
+  youtube: string;
+  tiktok: string;
+  social_links: {
+    linkedin: string;
+    twitter: string;
+    facebook: string;
+    instagram: string;
+    github: string;
+    youtube: string;
+    tiktok: string;
+  };
+}
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
 
-const footerLinks = {
-  Company: [
-    { name: 'About', href: '/about' },
-    { name: 'Services', href: '/services' },
-    { name: 'Projects', href: '/projects' },
-    { name: 'Platform', href: '/platform' },
-    { name: 'Blog', href: '/blog' },
-  ],
+  // State for dynamic settings
+  const [settings, setSettings] = useState<SiteSettings | null>(null);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch settings on mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/site-settings/');
+        if (!response.ok) throw new Error('Failed to fetch settings');
+        const data = await response.json();
 
+        setSettings(data);
+      } catch (error) {
+        console.error('Error fetching footer settings:', error);
+        // Fallback to null so it only renders generic placeholders
+        setSettings(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
+  const footerLinks = {
+    Company: [
+      { name: 'About', href: '/about' },
+      { name: 'Services', href: '/services' },
+      { name: 'Projects', href: '/projects' },
+      { name: 'Platform', href: '/platform' },
+      { name: 'Blog', href: '/blog' },
+    ],
     Resources: [
       { name: 'Case Studies', href: '/#case-study' },
       { name: 'How We Work', href: '/#process' },
       { name: 'FAQ', href: '/#faq' },
     ],
-
     Contact: [
       { name: 'Contact Us', href: '/contact' },
       { name: 'Support', href: '/contact' },
     ],
   };
 
-  const socialLinks = [
-    {
-      name: 'X',
-      href: 'https://twitter.com/meshengg',
-    },
-    {
-      name: 'LinkedIn',
-      href: 'https://linkedin.com/company/meshengg',
-    },
-    {
-      name: 'GitHub',
-      href: 'https://github.com/meshengg',
-    },
-    {
-      name: 'YouTube',
-      href: 'https://youtube.com/@meshengg',
-    },
-  ];
+  // Dynamic Social Links derived from API
+  const getSocialLinks = () => {
+    if (!settings) {
+      return []; // Return empty array if no API data
+    }
+
+    const links = settings.social_links || {};
+    const validLinks = [];
+
+    if (links.linkedin) validLinks.push({ name: 'LinkedIn', href: links.linkedin });
+    if (links.twitter) validLinks.push({ name: 'X', href: links.twitter });
+    if (links.github) validLinks.push({ name: 'GitHub', href: links.github });
+    if (links.youtube) validLinks.push({ name: 'YouTube', href: links.youtube });
+
+    // If API provides direct top-level links as backup
+    if (validLinks.length === 0) {
+      if (settings.linkedin) validLinks.push({ name: 'LinkedIn', href: settings.linkedin });
+      if (settings.twitter) validLinks.push({ name: 'X', href: settings.twitter });
+      if (settings.github) validLinks.push({ name: 'GitHub', href: settings.github });
+      if (settings.youtube) validLinks.push({ name: 'YouTube', href: settings.youtube });
+    }
+
+    return validLinks;
+  };
 
   /*
    * Brand icons are rendered as inline SVGs.
@@ -64,12 +117,7 @@ const footerLinks = {
 
     switch (name) {
       case 'X':
-        return (
-          <X
-            className={className}
-            strokeWidth={1.5}
-          />
-        );
+        return <X className={className} strokeWidth={1.5} />;
 
       case 'LinkedIn':
         return (
@@ -114,136 +162,111 @@ const footerLinks = {
 
   return (
     <footer className="relative bg-ink-950 border-t border-white/10 overflow-hidden">
-
       {/* Background Glow */}
       <div className="absolute -bottom-32 -right-32 w-96 h-96 bg-teal-400/5 rounded-full blur-3xl pointer-events-none" />
-
       <div className="absolute -top-32 -left-32 w-96 h-96 bg-violet-400/5 rounded-full blur-3xl pointer-events-none" />
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         {/* Main Footer Content */}
         <div className="py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
-
           {/* Brand Column */}
           <div className="col-span-1 md:col-span-2 lg:col-span-1">
-
-            <Link
-              to="/"
-              className="flex items-center gap-2.5 mb-4"
-            >
-              <span className="font-serif italic text-2xl text-violet-300">
-                ∇·AI
-              </span>
-
+            <Link to="/" className="flex items-center gap-2.5 mb-4">
+              {loading ? (
+                <div className="w-24 h-8 bg-white/5 rounded animate-pulse" />
+              ) : (
+                <>
+                  {settings?.logo_dark ? (
+                    <img
+                      src={settings.logo_dark}
+                      alt={settings.site_name}
+                      className="h-8 w-auto object-contain"
+                    />
+                  ) : settings?.logo ? (
+                    <img
+                      src={settings.logo}
+                      alt={settings.site_name}
+                      className="h-8 w-auto object-contain invert brightness-200"
+                    />
+                  ) : (
+                    <span className="font-serif italic text-2xl text-violet-300 tracking-wide">
+                      {settings?.site_name || 'Brand Name'}
+                    </span>
+                  )}
+                </>
+              )}
               <span className="text-[11px] font-mono tracking-[0.2em] text-gray-500 uppercase border-l border-white/15 pl-2.5">
-                Meshengg
+                {loading ? '...' : (settings?.site_name || 'BRAND')}
               </span>
             </Link>
 
             <p className="text-sm text-gray-400 max-w-xs leading-relaxed mb-4">
-              AI agents that automate physics-based simulation end-to-end —
-              from antenna design to complete wireless systems.
+              {loading ? '...' : (settings?.footer_description || settings?.site_description || 'Company description goes here.')}
             </p>
 
             {/* Contact Information */}
             <div className="space-y-2.5">
-
               {/* Email */}
               <a
-                href="mailto:Admin@meshengg.com"
+                href={`mailto:${settings?.email || ''}`}
                 className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-teal-300 transition-colors duration-200 group"
               >
-                <Mail
-                  className="w-4 h-4 text-teal-400/70 group-hover:text-teal-300 transition-colors"
-                  strokeWidth={1.5}
-                />
-
-                <span>
-                  Admin@meshengg.com
-                </span>
+                <Mail className="w-4 h-4 text-teal-400/70 group-hover:text-teal-300 transition-colors" strokeWidth={1.5} />
+                <span>{settings?.email || 'email@example.com'}</span>
               </a>
 
               {/* Phone */}
               <a
-                href="tel:03155254328"
+                href={`tel:${settings?.phone || ''}`}
                 className="flex items-center gap-2.5 text-sm text-gray-400 hover:text-teal-300 transition-colors duration-200 group"
               >
-                <Phone
-                  className="w-4 h-4 text-teal-400/70 group-hover:text-teal-300 transition-colors"
-                  strokeWidth={1.5}
-                />
-
-                <span>
-                  0315-5254328
-                </span>
+                <Phone className="w-4 h-4 text-teal-400/70 group-hover:text-teal-300 transition-colors" strokeWidth={1.5} />
+                <span>{settings?.phone || '+1 (555) 000-0000'}</span>
               </a>
 
               {/* Location */}
               <div className="flex items-start gap-2.5 text-sm text-gray-400 group">
-                <MapPin
-                  className="w-4 h-4 text-teal-400/70 group-hover:text-teal-300 transition-colors shrink-0 mt-0.5"
-                  strokeWidth={1.5}
-                />
-
-                <span>
-                  San Francisco, CA
-                </span>
+                <MapPin className="w-4 h-4 text-teal-400/70 group-hover:text-teal-300 transition-colors shrink-0 mt-0.5" strokeWidth={1.5} />
+                <span>{settings?.location || 'Location, Country'}</span>
               </div>
-
             </div>
           </div>
 
           {/* Footer Link Columns */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
-
-              <h3 className="text-xs font-mono text-teal-300 tracking-[0.15em] uppercase mb-4">
-                {title}
-              </h3>
-
+              <h3 className="text-xs font-mono text-teal-300 tracking-[0.15em] uppercase mb-4">{title}</h3>
               <ul className="space-y-2.5">
-
                 {links.map((link) => (
                   <li key={link.name}>
-
                     <Link
                       to={link.href}
                       className="text-sm text-gray-400 hover:text-teal-300 transition-colors duration-200 flex items-center gap-1 group"
                     >
-                      <span>
-                        {link.name}
-                      </span>
-
-                      <ArrowUpRight
-                        className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-y-0.5 group-hover:translate-x-0.5"
-                        strokeWidth={1.5}
-                      />
+                      <span>{link.name}</span>
+                      <ArrowUpRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-all duration-200 -translate-y-0.5 group-hover:translate-x-0.5" strokeWidth={1.5} />
                     </Link>
-
                   </li>
                 ))}
-
               </ul>
             </div>
           ))}
-
         </div>
 
         {/* Bottom Section */}
         <div className="border-t border-white/10 py-6 md:py-8 flex flex-col sm:flex-row justify-between items-center gap-4">
-
           {/* Copyright */}
           <p className="text-xs text-gray-500 text-center sm:text-left">
-            &copy; {currentYear} Meshengg, Inc.
-            {' '}
-            (formerly AI-Website). All rights reserved.
+            {loading 
+              ? '...' 
+              : (settings?.copyright_text || '© {year} Company Name. All rights reserved.')
+                  .replace('{year}', currentYear.toString())
+            }
           </p>
 
           {/* Social Icons */}
           <div className="flex items-center gap-3">
-
-            {socialLinks.map((social) => (
+            {getSocialLinks().map((social) => (
               <a
                 key={social.name}
                 href={social.href}
@@ -255,35 +278,28 @@ const footerLinks = {
                 <SocialIcon name={social.name} />
               </a>
             ))}
-
           </div>
         </div>
 
         {/* Trust Badges */}
         <div className="border-t border-white/5 py-4 flex flex-wrap justify-center gap-x-6 gap-y-2">
-
           <span className="text-[10px] font-mono tracking-[0.1em] text-gray-600 uppercase flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-400/50" />
             Secure & Private
           </span>
-
           <span className="text-[10px] font-mono tracking-[0.1em] text-gray-600 uppercase flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-400/50" />
             Enterprise Ready
           </span>
-
           <span className="text-[10px] font-mono tracking-[0.1em] text-gray-600 uppercase flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-400/50" />
             PhD Built
           </span>
-
           <span className="text-[10px] font-mono tracking-[0.1em] text-gray-600 uppercase flex items-center gap-1.5">
             <span className="w-1.5 h-1.5 rounded-full bg-teal-400/50" />
             NDA Protected
           </span>
-
         </div>
-
       </div>
     </footer>
   );

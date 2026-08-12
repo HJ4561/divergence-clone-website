@@ -50,6 +50,44 @@ export default function Header() {
   const navigate = useNavigate();
   const location = useLocation();
 
+  // New state for dynamic settings
+  const [settings, setSettings] = useState<{
+    site_name: string;
+    logo: string;
+    logo_dark: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch settings on mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        // REPLACE THIS URL with your actual backend endpoint
+        const response = await fetch('/api/settings'); 
+        if (!response.ok) throw new Error('Failed to fetch settings');
+        const data = await response.json();
+        
+        setSettings({
+          site_name: data.site_name || 'Meshengg', // Fallback to Meshengg if field is empty
+          logo: data.logo || '',
+          logo_dark: data.logo_dark || '',
+        });
+      } catch (error) {
+        console.error('Error fetching header settings:', error);
+        // Fallback text if the API completely fails
+        setSettings({
+          site_name: 'Meshengg',
+          logo: '',
+          logo_dark: '',
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
   // Handle scroll to section after navigation
   useEffect(() => {
     if (location.pathname === '/' && location.hash) {
@@ -98,10 +136,41 @@ export default function Header() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <Link to="/" className="flex items-center gap-2.5">
-            <span className="font-serif italic text-2xl text-violet-300">&#8711;&middot;AI</span>
-            <span className="hidden sm:inline text-[11px] font-mono tracking-[0.2em] text-gray-500 uppercase border-l border-white/15 pl-2.5">
-              Meshengg
-            </span>
+            {/* Dynamic Logo and Site Name Area */}
+            <div className="flex items-center gap-2.5">
+              {loading ? (
+                // Placeholder while loading to prevent layout shift
+                <div className="w-24 h-8 bg-white/5 rounded animate-pulse" />
+              ) : (
+                <>
+                  {/* Check if a dark logo exists (since header is dark theme) */}
+                  {settings?.logo_dark ? (
+                    <img 
+                      src={settings.logo_dark} 
+                      alt={settings.site_name} 
+                      className="h-8 w-auto object-contain"
+                    />
+                  ) : settings?.logo ? (
+                    // Fallback to light logo if dark isn't provided
+                    <img 
+                      src={settings.logo} 
+                      alt={settings.site_name} 
+                      className="h-8 w-auto object-contain invert brightness-200" // Added filters to make light logo readable on dark bg
+                    />
+                  ) : (
+                    // TEXT FALLBACK: Changed to Meshengg
+                    <span className="font-serif italic text-2xl text-violet-300 tracking-wide">
+                      {settings?.site_name || 'Meshengg'}
+                    </span>
+                  )}
+                </>
+              )}
+
+              {/* Dynamic Subtext - pulling from site_name */}
+              <span className="hidden sm:inline text-[11px] font-mono tracking-[0.2em] text-gray-500 uppercase border-l border-white/15 pl-2.5">
+                {loading ? '...' : (settings?.site_name || 'Meshengg')}
+              </span>
+            </div>
           </Link>
 
           <nav className="hidden md:flex space-x-6">

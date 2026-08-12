@@ -1,5 +1,5 @@
 // src/pages/Contact.tsx
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import EnquiryForm from '../components/ui/EnquiryForm';
 import { Link } from 'react-router-dom';
 
@@ -60,6 +60,41 @@ function ScrollToTop() {
 // CONTACT PAGE
 // ============================================================
 export default function Contact() {
+  // State for dynamic settings
+  const [settings, setSettings] = useState<{
+    site_name: string;
+    logo: string;
+    logo_dark: string;
+    calendar_link: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Fetch settings on mount
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await fetch('/api/site-settings/');
+        if (!response.ok) throw new Error('Failed to fetch settings');
+        const data = await response.json();
+
+        setSettings({
+          site_name: data.site_name || 'Brand',
+          logo: data.logo || '',
+          logo_dark: data.logo_dark || '',
+          calendar_link: data.calendar_link || '/contact',
+        });
+      } catch (error) {
+        console.error('Error fetching contact settings:', error);
+        // Fallback to null so it shows generic placeholders on failure
+        setSettings(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSettings();
+  }, []);
+
   // Scroll to top on page load
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -73,7 +108,32 @@ export default function Contact() {
             &sect; CONTACT / 001
           </span>
 
-          <span className="font-serif italic text-xl md:text-2xl text-violet-300">&#8711;&middot;AI</span>
+          {/* Dynamic Brand Logo / Name */}
+          <div className="h-8 flex items-center">
+            {loading ? (
+              <div className="w-24 h-6 bg-white/5 rounded animate-pulse" />
+            ) : (
+              <>
+                {settings?.logo_dark ? (
+                  <img
+                    src={settings.logo_dark}
+                    alt={settings.site_name}
+                    className="h-6 w-auto object-contain"
+                  />
+                ) : settings?.logo ? (
+                  <img
+                    src={settings.logo}
+                    alt={settings.site_name}
+                    className="h-6 w-auto object-contain invert brightness-200"
+                  />
+                ) : (
+                  <span className="font-serif italic text-xl md:text-2xl text-violet-300 tracking-wide">
+                    {settings?.site_name || 'Brand'}
+                  </span>
+                )}
+              </>
+            )}
+          </div>
 
           <div className="mt-3 pt-3 border-t border-white/10">
             <h1 className="font-serif text-lg sm:text-xl md:text-2xl font-semibold text-white">
@@ -92,7 +152,10 @@ export default function Contact() {
         <div className="text-center mt-3">
           <p className="text-xs sm:text-sm text-gray-400">
             Prefer to talk?{' '}
-            <Link to="/contact" className="text-teal-300 hover:text-teal-200 transition-colors underline">
+            <Link 
+              to={settings?.calendar_link || '/contact'} 
+              className="text-teal-300 hover:text-teal-200 transition-colors underline"
+            >
               Book a call &rarr;
             </Link>
           </p>

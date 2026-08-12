@@ -3,7 +3,6 @@ import React, { useState, useEffect } from 'react';
 import Hero from '../components/home/Hero';
 import FieldNotes from '../components/home/FieldNotes';
 import Stats from '../components/home/Stats';
-import Testimonials from '../components/home/Testimonials';
 import ServicesOverview from '../components/home/ServicesOverview';
 import CaseStudy from '../components/home/CaseStudy';
 import AssetSection from '../components/home/AssetSection';
@@ -161,9 +160,8 @@ export default function Home() {
   return (
     <>
       <Hero data={data?.hero} pipelineSteps={data?.pipeline_steps || []} />
-      <Problems data={data?.problem_statement} />
+<Problems data={data?.problem_statement} loading={loading} />
       <Stats data={data?.statistic} />
-      <Testimonials data={data?.problem_statement} />
       <FieldNotes data={data?.field_note} />
       <ServicesOverview data={data?.service_section} />
       <CaseStudy data={data?.case_study} />
